@@ -171,7 +171,7 @@ Commands related to pihole:
 
 ### Disable unneeded interfaces
 
-To minise used energy, the boot config can be configured in `/boot/config.txt`, so that unnecessary interfaces are deactivated.[^pihole-boot] Some are listed below:
+To minise used energy, the boot config can be configured in `/boot/firmware/config.txt`, so that unnecessary interfaces are deactivated.[^pihole-boot] Some are listed below:
 
 ```sh
 # Disable analog audio 
