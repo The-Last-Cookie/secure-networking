@@ -193,9 +193,9 @@ hdmi_blanking=1
 To minimise load on the SD card, pihole can be configured to not save as often to disk. In `/etc/pihole/pihole-FTL.conf`, type in the following settings:
 
 ```sh
-#; How often are queries stored in FTL's database [minutes] | Default: 1.0 
+#; How often are queries stored in FTL's database [minutes] | Default: 1.0
 DBINTERVAL=30
-#; IP addresses older than the specified number of days are removed from database | Default: 365 
+#; IP addresses older than the specified number of days are removed from database | Default: 365
 MAXDBDAYS=14
 ```
 
