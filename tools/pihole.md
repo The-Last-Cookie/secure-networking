@@ -11,6 +11,8 @@ Tutorials:
 
 Write the Raspberry Pi image to a SD card with the Raspberry Pi imager.
 
+Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (32 bit)` is chosen.
+
 To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and passwort combination or a public key.
 
 After the installation has finished, let the device connect to the network and find out its IP address.
@@ -39,7 +41,7 @@ openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -noenc
 
 This pem file now contains a key and a certificate (.crt) file.
 
-Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. The location doesn’t really matter here as long as access is given to the files needed (*sudo chown www-data 400*). "SSL" or "TLS" as the folder name is the most common setup.
+Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. The location doesn’t really matter here as long as access is given to the files needed (*sudo chown www-data [pem file]*). "SSL" or "TLS" as the folder name is the most common setup.
 
 **Step 2:** Add the SSL config in the `/etc/lighttpd/conf-available/10-ssl.conf` file, where "10" notes down the order in which the config files are loaded in (which number is used is not important here).
 
@@ -49,7 +51,7 @@ Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. 
 
 server.modules += ("mod_openssl")
 
-$HTTP["host"] =~ "(^pi.hole$)" {
+$HTTP["host"] =~ "(<IP address>|^pi.hole$)" {
 
   # Enable the SSL engine with a LE cert, only for this specific host
   $SERVER["socket"] == ":443" {
