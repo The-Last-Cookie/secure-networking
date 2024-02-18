@@ -25,7 +25,7 @@ Then, install pihole with `curl -sSL https://install.pi-hole.net | bash`.
 
 While installing, note down the web interface password that is shown in the terminal to later access the web interface for the first time.
 
-Now add the Raspberry Pi's IP address as a DNS to your router's settings.
+Now add the Raspberry Pi's IP address as a DNS to your router's settings.[^router-settings]
 
 The web interface is now accessible via `http://<IP address>/admin`. The standard port of the web interface is 80.
 
@@ -209,5 +209,6 @@ Thus, they are moved from `/etc/apt/trusted.gpg` to `/etc/apt/trusted.d/key1.gpg
 
 ## Annotations
 
+[^router-settings]: An example setting for the Fritz!Box router has been added [here](/../router.md).
 [^pihole-boot]: The full documentation regarding this file is available [here](https://www.raspberrypi.com/documentation/computers/config_txt.html).
 [^apt-key]: [Warnung apt keyring beim Update beheben](https://forum-raspberrypi.de/forum/thread/60014-warnung-apt-keyring-beim-update-beheben/)
