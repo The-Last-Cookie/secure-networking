@@ -23,7 +23,7 @@ For now, Tenable Nessus Essentials (from now on *Tenable*) will be used because 
 
 Tenable can be used for scanning up to 16 host devices. Discovery scans however support more than 16 IPs.[^0D53a00007ZjncaCAB]
 
-The free version of Tenable does not support agent scanning, credentialed scanning is the only way when carrying out deep system analyses. Agents scans are part of the Nessus Manager paid version where the collected data can be send to e.g. [Tenable.sc](https://www.tenable.com/products/tenable-sc). On-site scans with local admin privileges will be able to analyse the system better than a unprivileged scans or endpoint analysis. Endpoint scans which scan the host for open ports do have their own use though, which is to say that they can be used to detect unused services or critical connections to the network.
+The free version of Tenable does not support agent scanning, credentialed scanning is the only way when carrying out deep system analyses. Agents scans are part of the Nessus Manager paid version where the collected data can be send to e.g. [Tenable.sc](https://www.tenable.com/products/tenable-sc). On-site scans with local admin privileges will be able to analyse the system better than unprivileged scans or endpoint analysis. Endpoint scans which scan the host for open ports do have their own use though, which is to say that they can be used to detect unused services or critical connections to the network.
 
 In this context, it is best to use static IPs for the host devices that should be scanned. Or, if possible, directly use the results from a discovery scan to execute a vulnerability scan for the discovered devices<!--TODO: Investigate if it is possible to reuse the scan results in such a way.-->.
 
@@ -33,20 +33,55 @@ The scan should be done via a dedicated account used for scanning that has appro
 
 To store passwords for these dedicated accounts, Bitwarden might be useful to have on the server running Tenable.
 
-### Configuration
+### Considerations to take into account
 
-#### Windows
+- Log **monitoring** for when the account is in use outside of standard change control hours, with alerts for activities outside of normal windows.
+- Perform frequent **password rotation** for privileged accounts more often than the "normal" internal standard.
+- Enable accounts only when the time window for scans is active; **disable accounts** at other times.[^disable-account]
+- On non-Windows systems, do not allow remote root logins. Configure your scans to **utilize escalation** such as su or sudo.
+- Use **key authentication** instead of password authentication.
 
-To enable a credentialed scan on **Windows**, the host device needs to be configured:
+### Protecting credentials
 
-- Activate remote registry, so Tenable can remotely access the registry settings.
-- Turn on file and printer sharing.
-- Set the user account control (UAC) setting to `Never notify`.
-- Add the registry key `LocalAccountTokenFilterPolicy` in *HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Window\CurrentVersion\Policies\System* and set its value to 1.
+- https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts
+- https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts
 
-TODO: check which of these options may decrease the device's security (e.g. the UAC thing is dangerous but can't be changed because the pc is not in a domain)
+## Readiness check
 
-#### Linux
+### Windows
+
+To enable a credentialed scan on **Windows**, the host device needs to be configured with certain settings.
+
+The script in this project which applies this configuration automatically should only be used for computers that are not part of any domain.
+
+#### User account control (UAC)
+
+Disable User Account Control (UAC) by setting it to `Never Notify`.[^uac]
+
+Furthermore, add the registry key `LocalAccountTokenFilterPolicy` in `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System` and set its value to 1.
+
+#### Remote registry
+
+In the `Services` dialogue (*services.msc*), remote registry must be activated (set to `Automatic`) so that Nessus can scan the system for insecure registry configurations.[^remote-registry]
+
+#### Administrative shares
+
+File and printer sharing needs to be activated for the scan.
+
+Inspirations taken from:
+
+- https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md
+- https://github.com/tecnobabble/nessus_win_cred_test
+
+#### smb stuff
+
+- https://learn.microsoft.com/en-us/previous-versions/orphan-topics/ws.11/cc731957(v=ws.11)?redirectedfrom=MSDN
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-locally
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-through-remote-desktop-services
+- https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/microsoft-network-server-digitally-sign-communications-always
+- https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-security
+
+### Linux
 
 **Linux** does support credentialed scans via SSH key authentication.
 
@@ -57,14 +92,6 @@ TODO: check which of these options may decrease the device's security (e.g. the 
 - https://docs.tenable.com/nessus/compliance-checks-reference/Content/CredentialedScanningandPrivilegedAccountUse.htm
 - https://community.tenable.com/s/question/0D53a00006seVRHCA2/credentialed-scans-of-windows-10-workgroup-machines-with-nessus-essentials
 - https://community.tenable.com/s/article/Scanning-with-non-default-Windows-Administrator-Account
-- https://www.tenable.com/blog/4-best-practices-for-credentialed-scanning-with-nessus
-- https://www.anthonyram.com/blog/a-guide-to-installing-and-using-the-nessus-vulnerability-scanner
-- https://security.berkeley.edu/faq/nessus-network-vulnerability-scanning/how-do-i-run-credentialed-nessus-scan-windows-computer
-
-### Protecting credentials
-
-- https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts
-- https://www.tenable.com/blog/how-to-protect-scanning-credentials-overview
 
 ## Managing Nessus
 
@@ -75,3 +102,6 @@ There is also the `/opt/nessus/sbin/nessuscli` tool to e.g. reset the password o
 ## Annotations
 
 [^0D53a00007ZjncaCAB]: [Steve Gillham-1 in "Looking for clarification on Essentials 16 limit."](https://community.tenable.com/s/question/0D53a00007ZjncaCAB/looking-for-clarification-on-essentials-16-limit)
+[^disable-account]: `net user <username> /active:no`. Activate again using the option *yes*.
+[^uac]: In German, the dialogue is called "Einstellungen der Benutzerkontensteuerung ändern" and needs to be set from `Standard` to `Nie benachrichtigen`.
+[^remote-registry]: In German, `Remoteregistrierung` must be set from `Deaktiviert` to `Automatisch`.
