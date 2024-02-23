@@ -158,6 +158,7 @@ Common commands:
 | Command | Description |
 | :-: | :-- |
 | sudo systemctl reboot | Reboot the system |
+| sudo shutdown --poweroff | Shutdown the system (*systemctl poweroff* does the same but does not provide any scheduling ability) |
 | lscpu | Display CPU information |
 | lsblk | Display disk information |
 | free -m | Show RAM information |
