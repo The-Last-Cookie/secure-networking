@@ -7,7 +7,11 @@ function Set-RegistryValue
 		[string] $Type = "DWORD"
 	)
 
-	if ((Test-Path -Path $Key) -eq $false) { New-Item -ItemType Directory -Path $Key | Out-Null }
+	if ((Test-Path -Path $Key) -eq $false)
+	{
+		New-Item -ItemType Directory -Path $Key | Out-Null
+	}
+
 	Set-ItemProperty -Path $Key -Name $Name -Value $Value -Type $Type
 }
 
@@ -18,5 +22,9 @@ function Get-RegistryValue
 		[string] $Name
 	)
 
-	Get-ItemPropertyValue $Key $Name
+	try {
+		Get-ItemPropertyValue $Key $Name
+	} catch [System.Management.Automation.PSArgumentException] {
+		return "NoValueException" # TODO: Use safer option
+	}
 }

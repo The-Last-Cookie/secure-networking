@@ -5,8 +5,12 @@ function Write-BulletPoint
 		[string] $Prefix = "[",
 		[string] $Suffix = "] ",
 		[string] $Text = "Done",
-		$Done = $true
+		[int] $State = 0
 	)
+
+	if ($State -notin 0, 1, 2) {
+		return
+	}
 
 	$greenCheck = @{
 		Object = [char] 8730
@@ -14,12 +18,21 @@ function Write-BulletPoint
 		NoNewLine = $true
 	}
 
+	$redCheck = @{
+		Object = 'X'
+		ForegroundColor = 'Red'
+		NoNewLine = $true
+	}
+
 	Write-Host $Prefix -NoNewLine
 
-	if ($Done) {
+	if ($State -eq 0) {
 		Write-Host @greenCheck
 	}
-	else {
+	elseif ($State -eq 1) {
+		Write-Host @redCheck
+	}
+	elseif ($State -eq 2) {
 		Write-Host " " -NoNewline
 	}
 
