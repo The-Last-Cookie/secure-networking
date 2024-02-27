@@ -120,7 +120,7 @@ function HandleUserAccountControl
 			"UACLevel" = Get-UACLevel
 		}
 	}
-	Save-Setting -Content ($UACConfiguration | ConvertTo-Json)
+	Save-Setting -Content ($UACConfiguration | ConvertTo-Json -Compress)
 
 	if (!$Silent) {
 		$Answer = Read-Host -Prompt "User Account Control (UAC) is currently enabled. Press 'y' to disable it. "
