@@ -11,6 +11,17 @@ function Save-Setting
 		$myJson = @{}
 	}
 
-	$myJson += $Content
+	# Everything for one check is contained in one key
+	$Key = $Content.Keys[0]
+	$myJson[$Key] += $Content
 	$myJson | ConvertTo-Json | Out-File $Path
+}
+
+function Get-Settings
+{
+	param (
+		$Path = ".\config.json"
+	)
+
+	Get-Content $Path -Raw | ConvertFrom-Json
 }
