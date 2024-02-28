@@ -29,3 +29,37 @@ function EnableRemoteRegistry
 
     Write-BulletPoint -Text "Remote registry active"
 }
+
+function HandleRemoteRegistry
+{
+	param (
+		$Silent = $false
+	)
+
+	$Computer = [Environment]::MachineName
+	$RemoteRegistry = Get-Service -ComputerName $Computer -Name RemoteRegistry
+
+	if ($RemoteRegistry.Status -eq 'Running') {
+		Write-BulletPoint "Remote registry configuration is correct."
+		return
+	}
+
+	$RemoteRegistryConfig = @{
+		"remote-registry" = @{
+			"Computer" = $Computer
+		}
+	}
+	Save-Setting -Content ($RemoteRegistryConfig | ConvertTo-Json -Compress)
+
+	if (!$Silent) {
+		$Answer = Read-Host -Prompt "Remote registry is currently disabled. Press 'y' to enable it. "
+		if ($Answer -match "y") {
+			EnableRemoteRegistry
+		} else {
+			Write-Host "Skipping remote registry configuration."
+			return
+		}
+	}
+
+	EnableRemoteRegistry
+}

@@ -124,7 +124,7 @@ function HandleUserAccountControl
 
 	if (!$Silent) {
 		$Answer = Read-Host -Prompt "User Account Control (UAC) is currently enabled. Press 'y' to disable it. "
-		if ($Answer -match "Y") {
+		if ($Answer -match "y") {
 			Disable-UserAccountControl
 		} else {
 			Write-Host "Skipping UAC configuration."
