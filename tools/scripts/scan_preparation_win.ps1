@@ -16,7 +16,8 @@ function Start-Check
 	Write-Host "Keep in mind that not setting every configuration to its required value may impact the scan.`n"
 
 	HandleUserAccountControl
-	#HandleRemoteRegistry
+	HandleRemoteRegistry
+	#HandleAdministrativeShares
 
 	Write-Host "The system has been prepared for the scan."
 }

@@ -49,7 +49,7 @@ function HandleRemoteRegistry
 			"Computer" = $Computer
 		}
 	}
-	Save-Setting -Content ($RemoteRegistryConfig | ConvertTo-Json -Compress)
+	Save-Setting -Content $RemoteRegistryConfig
 
 	if (!$Silent) {
 		$Answer = Read-Host -Prompt "Remote registry is currently disabled. Press 'y' to enable it. "
