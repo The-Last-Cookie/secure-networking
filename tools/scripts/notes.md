@@ -7,6 +7,7 @@ What I imagine for this script in the future:
 - Command line option "report" creates a file report.txt containing a table with what was changed (in simple terms). Not every single registry key is listed but rather what was configured in general. So instead of saying `LocalAccountTokenFilterPolicy` was set to 1, it just says *UAC was disabled*.
 - A `settings.json` file is created containing every single setting (now seen from the technical layer). The cleanup script could use that to more easily retrieve the system's default settings (before the scan).
 - Let the user go through every check and let them choose to apply recommended/required settings or not.
+  - Command line option "silent"/"force" will not ask the user.
 
 ## Missing checks?
 
@@ -43,10 +44,11 @@ Ensure the proper user/group is in the local Administrator group. For the scan, 
 
 ```ps
 $Filter = "Name = 'Administratoren'"
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -eq [Environment]::MachineName} | Select -exp Name
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_Group") | Where-Object {$_.Domain -eq [Environment]::MachineName} | Select -exp Name
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -ne [Environment]::MachineName} | Select -exp Caption
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_Group") | Where-Object {$_.Domain -ne [Environment]::MachineName} | Select -exp Caption
+$MachineName = [Environment]::MachineName
+(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
+(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_Group") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
+(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
+(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_Group") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
 ```
 
 ### Windows 10 > 1709 - Server SPN Validation Enabled
