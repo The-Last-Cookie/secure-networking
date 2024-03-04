@@ -4,6 +4,7 @@
 
 . .\Modules\UACModule.ps1
 . .\Utils\RegistryUtils.ps1
+. .\Utils\FileUtils.ps1
 
 function UserAccountControl
 {
@@ -12,13 +13,14 @@ function UserAccountControl
 		$Configuration
 	)
 
+	$RegistryItem = "LocalAccountTokenFilterPolicy"
 	if ($Configuration.LocalAccountTokenFilterPolicy -match "NoValueException") {
-		Remove-ItemProperty -Path $SystemPolicies -Name "LocalAccountTokenFilterPolicy"
+		Remove-ItemProperty -Path $SystemPolicies -Name $RegistryItem
 	}
 	else {
-		Set-RegistryValue -Key $SystemPolicies -Name "LocalAccountTokenFilterPolicy" -Value $Configuration.LocalAccountTokenFilterPolicy
+		Set-RegistryValue -Key $SystemPolicies -Name $RegistryItem -Value $Configuration.LocalAccountTokenFilterPolicy
 	}
-	
+
 	Set-UACLevel -Level $Configuration.UACLevel
 }
 
@@ -61,18 +63,17 @@ Write-Host "Script executing for $LocalHost, part of $LocalDomain"
 
 Write-Host "Reverting changes to system default.`n"
 
-try {
-	$Settings = Get-Settings
-}
-catch {
+$Settings = Get-Settings
+if ($null -eq $Settings) {
 	Write-Host "No settings file found.`nExiting."
 	Exit
 }
 
+$Settings = Get-Hashtable $Settings
 $Keys = $Settings.Keys
 
 foreach ($Key in $Keys) {
-	$Setting = $Settings[$Key]
+	$Setting = $Settings.$Key
 	Restore-Setting -Key $Key -Configuration $Setting
 }
 

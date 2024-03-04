@@ -57,5 +57,5 @@ function Get-Settings
 		$Path = ".\config.json"
 	)
 
-	Get-Content $Path -Raw | ConvertFrom-Json
+	Get-Content $Path -Raw -ErrorAction SilentlyContinue | ConvertFrom-Json
 }
