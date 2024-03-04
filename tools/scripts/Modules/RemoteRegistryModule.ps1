@@ -40,7 +40,7 @@ function HandleRemoteRegistry
 	$RemoteRegistry = Get-Service -ComputerName $Computer -Name RemoteRegistry
 
 	if ($RemoteRegistry.Status -eq 'Running') {
-		Write-BulletPoint "Remote registry configuration is correct."
+		Write-BulletPoint -Text "Remote registry configuration is correct."
 		return
 	}
 
@@ -51,15 +51,15 @@ function HandleRemoteRegistry
 	}
 	Save-Setting -Content $RemoteRegistryConfig
 
-	if (!$Silent) {
-		$Answer = Read-Host -Prompt "Remote registry is currently disabled. Press 'y' to enable it. "
-		if ($Answer -match "y") {
-			EnableRemoteRegistry
-		} else {
-			Write-Host "Skipping remote registry configuration."
-			return
-		}
+	if ($Silent) {
+		EnableRemoteRegistry
+		return
 	}
 
-	EnableRemoteRegistry
+	$Answer = Read-Host -Prompt "Remote registry is currently disabled. Press 'y' to enable it. "
+	if ($Answer -match "y") {
+		EnableRemoteRegistry
+	} else {
+		Write-Host "Skipping remote registry configuration."
+	}
 }

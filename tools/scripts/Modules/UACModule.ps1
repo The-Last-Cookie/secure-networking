@@ -109,8 +109,8 @@ function HandleUserAccountControl
 
 	$LocalAccountTokenFilterPolicy = Get-RegistryValue -Key $SystemPolicies -Name "LocalAccountTokenFilterPolicy"
 
-	if (($LocalAccountTokenFilterPolicy -eq 1) -and (Get-UACLevel -eq [UACState]::NeverNotify)) {
-		Write-BulletPoint "UAC configuration is correct."
+	if (($LocalAccountTokenFilterPolicy -eq 1) -and ((Get-UACLevel) -eq [UACState]::NeverNotify)) {
+		Write-BulletPoint -Text "UAC configuration is correct."
 		return
 	}
 
@@ -122,15 +122,15 @@ function HandleUserAccountControl
 	}
 	Save-Setting -Content $UACConfiguration
 
-	if (!$Silent) {
-		$Answer = Read-Host -Prompt "User Account Control (UAC) is currently enabled. Press 'y' to disable it. "
-		if ($Answer -match "y") {
-			Disable-UserAccountControl
-		} else {
-			Write-Host "Skipping UAC configuration."
-			return
-		}
+	if ($Silent) {
+		Disable-UserAccountControl
+		return
 	}
 
-	Disable-UserAccountControl
+	$Answer = Read-Host -Prompt "User Account Control (UAC) is currently enabled. Press 'y' to disable it. "
+	if ($Answer -match "y") {
+		Disable-UserAccountControl
+	} else {
+		Write-Host "Skipping UAC configuration."
+	}
 }
