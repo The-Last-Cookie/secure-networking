@@ -43,12 +43,13 @@ Start-Service -Name Winmgmt
 Ensure the proper user/group is in the local Administrator group. For the scan, the nessus user must be part of the local admin group.
 
 ```ps
-$Filter = "Name = 'Administratoren'"
 $MachineName = [Environment]::MachineName
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_Group") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
-(Get-WMIObject Win32_Group -Filter $Filter).GetRelated("Win32_Group") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
+$Filter = "Name = 'Administratoren'"
+$WMI = Get-WMIObject Win32_Group -Filter $Filter
+$WMI.GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
+$WMI.GetRelated("Win32_Group") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
+$WMI.GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
+$WMI.GetRelated("Win32_Group") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
 ```
 
 ### Windows 10 > 1709 - Server SPN Validation Enabled
