@@ -134,7 +134,7 @@ If the window shows the text
 DNS resolution is currently unavailable
 ```
 
-then it may help to adjust the nameserver value in the `/etc/resolv.conf` file. When the Pi's IP changes, this might still contain the old IP.
+then it may help to adjust the nameserver value in the `/etc/resolv.conf` file. When the Pi's IP changes, this might still contain the old IP.[^ping]
 
 On GitHub, there is the [pihole adlist tool](https://github.com/yubiuser/pihole_adlist_tool) available which helps in deciding which adlists to use based on the browser behaviour. For example, it calculates the number of unique domains contained in the ad lists. As always, be careful with unknown scripts.
 
@@ -211,5 +211,6 @@ Thus, they are moved from `/etc/apt/trusted.gpg` to `/etc/apt/trusted.d/key1.gpg
 ## Annotations
 
 [^router-settings]: An example setting for the Fritz!Box router has been added [here](/../router.md).
+[^ping]: This can also be identified by using `ping`. If the IP is wrong, the command will say `Temporary failure in name resolution`.
 [^pihole-boot]: The full documentation regarding this file is available [here](https://www.raspberrypi.com/documentation/computers/config_txt.html).
 [^apt-key]: [Warnung apt keyring beim Update beheben](https://forum-raspberrypi.de/forum/thread/60014-warnung-apt-keyring-beim-update-beheben/)
