@@ -54,6 +54,8 @@ To enable a credentialed scan on **Windows**, the host device needs to be config
 
 The script in this project which applies this configuration automatically should only be used for computers that are not part of any domain.
 
+Inspirations for these checks have been taken from [Nessus-Powershell-Oneliners](https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md) and [Nessus Credentialed Assessment Readiness Check (Windows)](https://github.com/tecnobabble/nessus_win_cred_test)
+
 #### User account control (UAC)
 
 Disable User Account Control (UAC) by setting it to `Never Notify`.[^uac]
@@ -67,11 +69,6 @@ In the `Services` dialogue (*services.msc*), remote registry must be activated (
 #### Administrative shares
 
 File and printer sharing needs to be activated for the scan.
-
-Inspirations taken from:
-
-- https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md
-- https://github.com/tecnobabble/nessus_win_cred_test
 
 #### smb stuff
 
