@@ -29,6 +29,14 @@ Now add the Raspberry Pi's IP address as a DNS to your router's settings.[^route
 
 The web interface is now accessible via `http://<IP address>/admin`. The standard port of the web interface is 80.
 
+### Pihole v6
+
+The next major version uses a different webserver. Thus all PHP components and the old webserver should be removed upon migration.
+
+```sh
+apt remove php lighttpd
+```
+
 ## Serving the pihole service over SSL
 
 When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole, it's `lighttpd`.
