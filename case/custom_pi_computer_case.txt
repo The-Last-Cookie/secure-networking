@@ -20,6 +20,7 @@ cpu load
 ladestatus des UPS (wie voll sind die Batterien)
 ladestatus (wie wird gerade geladen)
 https://github.com/danb35/raspi-ups-stats/tree/master
+--> wird unter /opt/stats/ gelegt, weil opt dafür gedacht ist (siehe Filesystem Hierarchy Structure [FHS])
 
 Lüfter:
 https://howchoo.com/pi/control-raspberry-pi-fan-temperature-python/
