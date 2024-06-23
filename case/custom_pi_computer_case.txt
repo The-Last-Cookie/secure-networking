@@ -1,0 +1,35 @@
+Tutorial
+https://www.youtube.com/watch?v=clbt12upuaA
+https://www.the-diy-life.com/mini-raspberry-pi-server-with-built-in-ups/
+
+
+ups python interface
+https://github.com/geeekpi/upsplus/blob/main/install.sh --> be careful! the program posts internal monitoring values to 52pi. These requests should be removed before the script is executed/installed
+--> though api.52pi.com/update might be needed
+it might be possible to get a nice looking api out of that (look at demo code):
+custom_interface = custom_INA219()
+custom_interface.serial_number()
+with an internal function read_buffer(start, end)
+
+Display:
+IP-Adresse
+Domain
+storage (wie voll)
+ram load
+cpu load
+ladestatus des UPS (wie voll sind die Batterien)
+ladestatus (wie wird gerade geladen)
+https://github.com/danb35/raspi-ups-stats/tree/master
+
+Lüfter:
+https://howchoo.com/pi/control-raspberry-pi-fan-temperature-python/
+https://github.com/Howchoo/pi-fan-controller
+
+https://wiki.52pi.com/index.php/EP-0136
+Verwendeter Prozessor: sgs thomson 32F030F4P6
+I2C im Embedded System: https://www.ti.com/product/INA219
+
+
+andere ideen:
+https://www.the-diy-life.com/i-built-a-4-bay-raspberry-pi-5-based-nas/
+https://www.the-diy-life.com/my-graphics-card-is-now-my-computer/
