@@ -1,1 +1,15 @@
-als service wie das display unter /opt/fan/
+[Unit]
+Description=Fan service
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/usr/local/bin/fan
+ExecStart=/usr/local/bin/fan/fancontrol.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

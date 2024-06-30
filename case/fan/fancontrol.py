@@ -7,25 +7,25 @@ import time
 from gpiozero import OutputDevice
 
 
-ON_THRESHOLD = 55  # (degrees Celsius) Fan kicks on at this temperature
-OFF_THRESHOLD = 50  # (degrees Celsius) Fan shuts off at this temperature
-SLEEP_INTERVAL = 60  # (seconds) How often we check the core temperature
-GPIO_PIN = 17  # GPIO pin to control the fan
+ON_THRESHOLD = 50       # (degrees Celsius) Fan kicks on at this temperature
+OFF_THRESHOLD = 40      # (degrees Celsius) Fan shuts off at this temperature
+SLEEP_INTERVAL = 300    # (seconds) How often we check the core temperature
+GPIO_PIN = 17           # GPIO pin to control the fan
 
 
-def temperature():
+def get_temperature():
     """Get the core temperature.
 
     Read file from /sys to get CPU temp in °C * 1000
 
     Returns:
-        int: The core temperature in millicelsius.
+        int: The core temperature in celsius.
     """
     with open('/sys/class/thermal/thermal_zone0/temp') as f:
-        temp_str = f.read()
+        millicelsius = f.read()
 
     try:
-        return int(temp_str) / 1000
+        return int(millicelsius) / 1000
     except (IndexError, ValueError,) as e:
         raise RuntimeError('Could not parse temperature output.') from e
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     fan = OutputDevice(GPIO_PIN)
 
     while True:
-        temperature = temperature()
+        temperature = get_temperature()
 
         # NOTE: `fan.value` returns 1 for "on" and 0 for "off"
         if temperature > ON_THRESHOLD and not fan.value:
