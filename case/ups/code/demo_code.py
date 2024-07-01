@@ -5,9 +5,7 @@
 Advanced users can select the functions they need through the function options provided in the code below to customize and develop them to meet their needs.
 '''
 
-import time
 import smbus2
-import logging
 from ina219 import INA219,DeviceRangeError
 
 DEVICE_BUS = 1
@@ -93,21 +91,21 @@ print("This running time: %d sec"% (aReceiveBuf[39] << 24 | aReceiveBuf[38] << 1
 print("Version number: %d "% (aReceiveBuf[41] << 8 | aReceiveBuf[40]))
 
 #The following code demonstrates resetting the protection voltage
-# bus.write_byte_data(DEVICE_ADDR, 17,PROTECT_VOLT & 0xFF)
-# bus.write_byte_data(DEVICE_ADDR, 18,(PROTECT_VOLT >> 8)& 0xFF)
+# bus.write_byte_data(DEVICE_ADDR, 17, PROTECT_VOLT & 0xFF) --> & 0xFF get first and second byte
+# bus.write_byte_data(DEVICE_ADDR, 18, (PROTECT_VOLT >> 8)& 0xFF)
 # print("Successfully set the protection voltage as: %d mV"% PROTECT_VOLT)
 
 #The following code demonstrates resetting the sampling period
-# bus.write_byte_data(DEVICE_ADDR, 21,SAMPLE_TIME & 0xFF)
-# bus.write_byte_data(DEVICE_ADDR, 22,(SAMPLE_TIME >> 8)& 0xFF)
+# bus.write_byte_data(DEVICE_ADDR, 21, SAMPLE_TIME & 0xFF)
+# bus.write_byte_data(DEVICE_ADDR, 22, (SAMPLE_TIME >> 8) & 0xFF)
 # print("Successfully set the sampling period as: %d Min"% SAMPLE_TIME)
 
 # Set to shut down after 240 seconds (can be reset repeatedly)
-# bus.write_byte_data(DEVICE_ADDR, 24,240)
-bus.write_byte_data(DEVICE_ADDR, 24,240)
+# bus.write_byte_data(DEVICE_ADDR, 24, 240)
+bus.write_byte_data(DEVICE_ADDR, 24, 240)
 
 # Cancel automatic shutdown
-# bus.write_byte_data(DEVICE_ADDR, 24,0)
+# bus.write_byte_data(DEVICE_ADDR, 24, 0)
 
 # Automatically turn on when there is an external power supply (If the automatic shutdown is set, when there is an external power supply, it will shut down and restart the board.)
 # 1) If you want to completely shut down, please don't turn on the automatic startup when there is an external power supply.
@@ -115,21 +113,21 @@ bus.write_byte_data(DEVICE_ADDR, 24,240)
 # 3) If you simply want to force restart the power, please use another method.
 # 4) Set to 0 to cancel automatic startup.
 # 5) If this automatic startup is not set, and the battery is exhausted and shut down, the system will resume work when the power is restored as much as possible, but it is not necessarily when the external power supply is plugged in.
-# bus.write_byte_data(DEVICE_ADDR, 25,1)
-bus.write_byte_data(DEVICE_ADDR, 25,1)
+# bus.write_byte_data(DEVICE_ADDR, 25, 1)
+bus.write_byte_data(DEVICE_ADDR, 25, 1)
 
 # Force restart (simulate power plug, write the corresponding number of seconds, shut down 5 seconds before the end of the countdown, and then turn on at 0 seconds.)
-# bus.write_byte_data(DEVICE_ADDR, 26,30)
+# bus.write_byte_data(DEVICE_ADDR, 26, 30)
 bus.write_byte_data(DEVICE_ADDR, 26, 10)
 
 # Restore factory settings (clear memory, clear learning parameters, can not clear the cumulative running time, used for after-sales purposes.)
-# bus.write_byte_data(DEVICE_ADDR, 27,1)
+# bus.write_byte_data(DEVICE_ADDR, 27, 1)
 
 # Enter the OTA state (the user demo program should not have this thing, after setting, unplug the external power supply, unplug the battery, reinstall the battery, install the external power supply (optional), you can enter the OTA mode and upgrade the firmware.)
-# bus.write_byte_data(DEVICE_ADDR, 50,127)
+# bus.write_byte_data(DEVICE_ADDR, 50, 127)
 
-# Serial Number 
+# Serial Number
 UID0 = "%08X" % (aReceiveBuf[243] << 24 | aReceiveBuf[242] << 16 | aReceiveBuf[241] << 8 | aReceiveBuf[240])
 UID1 = "%08X" % (aReceiveBuf[247] << 24 | aReceiveBuf[246] << 16 | aReceiveBuf[245] << 8 | aReceiveBuf[244]) 
 UID2 = "%08X" % (aReceiveBuf[251] << 24 | aReceiveBuf[250] << 16 | aReceiveBuf[249] << 8 | aReceiveBuf[248])
-print("Serial Number is:" + UID0 + "-" + UID1 + "-" + UID2 )
+print("Serial Number is:" + UID0 + "-" + UID1 + "-" + UID2)
