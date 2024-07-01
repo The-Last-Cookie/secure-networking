@@ -8,3 +8,5 @@
 6. sudo systemctl daemon-reload
 7. sudo systemctl enable [service]
 8. sudo systemctl start [service]
+
+eventuell denkbar auch als crontab job

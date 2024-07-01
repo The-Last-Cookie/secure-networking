@@ -11,6 +11,12 @@ custom_interface = custom_INA219()
 custom_interface.serial_number()
 with an internal function read_buffer(start, end)
 
+https://wiki.52pi.com/index.php/EP-0136
+Verwendeter Prozessor: sgs thomson 32F030F4P6
+I2C im Embedded System: https://www.ti.com/product/INA219
+
+
+
 Display:
 IP-Adresse
 Domain
@@ -20,15 +26,7 @@ cpu load
 ladestatus des UPS (wie voll sind die Batterien)
 ladestatus (wie wird gerade geladen)
 https://github.com/danb35/raspi-ups-stats/tree/master
---> wird unter /opt/stats/ gelegt, weil opt dafür gedacht ist (siehe Filesystem Hierarchy Structure [FHS])
 
-Lüfter:
-https://howchoo.com/pi/control-raspberry-pi-fan-temperature-python/
-https://github.com/Howchoo/pi-fan-controller
-
-https://wiki.52pi.com/index.php/EP-0136
-Verwendeter Prozessor: sgs thomson 32F030F4P6
-I2C im Embedded System: https://www.ti.com/product/INA219
 
 
 andere ideen:

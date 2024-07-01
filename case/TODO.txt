@@ -1,5 +1,3 @@
-OS auf SD card installieren (ssh zugang)
-fan skript installieren
 ups firmware herunterladen
 Reverse engineering
 ups firmware installieren

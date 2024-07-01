@@ -19,13 +19,13 @@ def get_temperature():
     Read file from /sys to get CPU temp in °C * 1000
 
     Returns:
-        int: The core temperature in celsius.
+        int: The core temperature in Celsius.
     """
     with open('/sys/class/thermal/thermal_zone0/temp') as f:
-        millicelsius = f.read()
+        milliCelsius = f.read()
 
     try:
-        return int(millicelsius) / 1000
+        return int(milliCelsius) / 1000
     except (IndexError, ValueError,) as e:
         raise RuntimeError('Could not parse temperature output.') from e
 
