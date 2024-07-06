@@ -101,19 +101,18 @@ print("Version number: %d "% (aReceiveBuf[41] << 8 | aReceiveBuf[40]))
 # print("Successfully set the sampling period as: %d Min"% SAMPLE_TIME)
 
 # Set to shut down after 240 seconds (can be reset repeatedly)
-# bus.write_byte_data(DEVICE_ADDR, 24, 240)
 bus.write_byte_data(DEVICE_ADDR, 24, 240)
 
 # Cancel automatic shutdown
 # bus.write_byte_data(DEVICE_ADDR, 24, 0)
 
+# Back to AC power up register
 # Automatically turn on when there is an external power supply (If the automatic shutdown is set, when there is an external power supply, it will shut down and restart the board.)
 # 1) If you want to completely shut down, please don't turn on the automatic startup when there is an external power supply.
 # 2) If you want to shut down the UPS yourself because of low battery power, you can shut down the UPS first, and then automatically recover when the external power supply comes.
 # 3) If you simply want to force restart the power, please use another method.
 # 4) Set to 0 to cancel automatic startup.
 # 5) If this automatic startup is not set, and the battery is exhausted and shut down, the system will resume work when the power is restored as much as possible, but it is not necessarily when the external power supply is plugged in.
-# bus.write_byte_data(DEVICE_ADDR, 25, 1)
 bus.write_byte_data(DEVICE_ADDR, 25, 1)
 
 # Force restart (simulate power plug, write the corresponding number of seconds, shut down 5 seconds before the end of the countdown, and then turn on at 0 seconds.)
