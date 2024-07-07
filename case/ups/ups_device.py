@@ -1,5 +1,5 @@
 import smbus2
-from ina219 import INA219,DeviceRangeError
+from ina219 import INA219, DeviceRangeError
 
 
 def join_bytes(*args: int) -> int:
@@ -77,16 +77,16 @@ class Battery:
 
 
 class Bus:
-	def __init__(self, protect_volt=3700, sample_period=2, shutdown_countdown=10, restart_countdown=10) -> None:
+	def __init__(self, protection_voltage=3700, sample_period=2, shutdown_countdown=10, restart_countdown=10) -> None:
 		self._device_bus = 1
 		self._device_addr = 0x17 # Address on which the processor (STM32) is available via the bus
 
-		self._protect_volt = protect_volt
-
 		self._bus = smbus2.SMBus(self._device_bus)
 
+		self.protection_volt = protection_voltage
 		self.sample_period = sample_period
 		self.shutdown_countdown = shutdown_countdown
+		self.automatic_shutdown_protection = True
 		self.restart_countdown = restart_countdown
 
 	def _read_byte(self, byte: int) -> int:
@@ -126,6 +126,21 @@ class Bus:
 		"""
 		return join_bytes(self._read_byte(12), self._read_byte(11))
 	
+	@property
+	def protection_volt(self) -> int:
+		volt = join_bytes(self._read_byte(18), self._read_byte(17))
+		self._protection_volt = volt
+		return self._protection_volt
+	
+	@protection_volt.setter
+	def protection_volt(self, volt: int):
+		if not(0 <= volt <= 4500):
+			raise ValueError
+		
+		self._write_byte(self._device_addr, 17, volt & 0xFF)
+		self._write_byte(self._device_addr, 18, (volt >> 8) & 0xFF)
+		self._protection_volt = volt
+
 	def battery_capacity(self) -> int:
 		"""
 		Returns %
@@ -145,8 +160,8 @@ class Bus:
 			raise ValueError
 
 		# convert to single byte
-		self._write_byte(self._device_addr, 22, frequency & 0xFF)
-		self._write_byte(self._device_addr, 21, (frequency >> 8) & 0xFF)
+		self._write_byte(self._device_addr, 21, frequency & 0xFF)
+		self._write_byte(self._device_addr, 22, (frequency >> 8) & 0xFF)
 		self._sample_period = frequency
 
 	def operation_mode(self) -> str:
@@ -167,12 +182,28 @@ class Bus:
 	def shutdown_countdown(self, countdown):
 		if countdown == 0:
 			self._write_byte(self._device_addr, 24, 0)
+			self._shutdown_countdown = countdown
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError
 
 		self._write_byte(self._device_addr, 24, countdown)
+		self._shutdown_countdown = countdown
+
+	@property
+	def automatic_shutdown_protection(self) -> bool:
+		"""
+		When the battery becomes low, the UPS automatically shuts down and turns on as soon as AC is available again.
+		"""
+		back_to_ac = self._read_byte(25)
+		self._back_to_ac = back_to_ac
+		return self._back_to_ac
+
+	@automatic_shutdown_protection.setter
+	def automatic_shutdown_protection(self, isActive: bool):
+		self._back_to_ac = isActive
+		self._write_byte(25, isActive)
 
 	@property
 	def restart_countdown(self) -> int:
@@ -184,12 +215,14 @@ class Bus:
 	def restart_countdown(self, countdown):
 		if countdown == 0:
 			self._write_byte(self._device_addr, 26, 0)
+			self._restart_countdown = countdown
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError
 
 		self._write_byte(self._device_addr, 26, countdown)
+		self._restart_countdown = countdown
 
 	def uptime(self) -> int:
 		"""
