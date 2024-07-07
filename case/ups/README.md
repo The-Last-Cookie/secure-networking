@@ -7,15 +7,18 @@ sudo raspi-config nonint do_i2c 0
 
 sudo apt install i2c-tools
 
-pip3 install pi-ina219
-pip3 install smbus2
+# without activating venv
+/path/to/venv/bin/pip install pi-ina219
+
+# with activating venv
+python3.11 -m pip install smbus2
 ```
 
 More information: <https://wiki.52pi.com/index.php/EP-0136> (registers and installation instructions for example)
 
 ## How to upgrade firmware of UPS
 
-```bash
+```sh
 python3 firmware_upgrade.py
 ```
 
