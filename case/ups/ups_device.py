@@ -137,8 +137,8 @@ class Bus:
 		if not(0 <= volt <= 4500):
 			raise ValueError
 
-		self._write_byte(self._device_addr, 17, volt & 0xFF)
-		self._write_byte(self._device_addr, 18, (volt >> 8) & 0xFF)
+		self._write_byte(17, volt & 0xFF)
+		self._write_byte(18, (volt >> 8) & 0xFF)
 		self._protection_volt = volt
 
 	def battery_capacity(self) -> int:
@@ -160,8 +160,8 @@ class Bus:
 			raise ValueError
 
 		# convert to single byte
-		self._write_byte(self._device_addr, 21, frequency & 0xFF)
-		self._write_byte(self._device_addr, 22, (frequency >> 8) & 0xFF)
+		self._write_byte(21, frequency & 0xFF)
+		self._write_byte(22, (frequency >> 8) & 0xFF)
 		self._sample_period = frequency
 
 	def operation_mode(self) -> str:
@@ -181,14 +181,14 @@ class Bus:
 	@shutdown_countdown.setter
 	def shutdown_countdown(self, countdown):
 		if countdown == 0:
-			self._write_byte(self._device_addr, 24, 0)
+			self._write_byte(24, 0)
 			self._shutdown_countdown = countdown
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError
 
-		self._write_byte(self._device_addr, 24, countdown)
+		self._write_byte(24, countdown)
 		self._shutdown_countdown = countdown
 
 	@property
@@ -214,14 +214,14 @@ class Bus:
 	@restart_countdown.setter
 	def restart_countdown(self, countdown):
 		if countdown == 0:
-			self._write_byte(self._device_addr, 26, 0)
+			self._write_byte(26, 0)
 			self._restart_countdown = countdown
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError
 
-		self._write_byte(self._device_addr, 26, countdown)
+		self._write_byte(26, countdown)
 		self._restart_countdown = countdown
 
 	def uptime(self) -> int:
