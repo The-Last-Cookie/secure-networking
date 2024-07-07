@@ -92,11 +92,11 @@ class Bus:
 	def _read_byte(self, byte: int) -> int:
 		"""
 		Read a single byte from a dedicated register on the processor.
-		Register addresses range from 1 to 255.
+		Register addresses range from 1 to 256.
 
 		Return: int
 		"""
-		if not(0 <= byte <= 256):
+		if not(1 <= byte <= 256):
 			raise ValueError
 
 		return self._bus.read_byte_data(self._device_addr, byte)
