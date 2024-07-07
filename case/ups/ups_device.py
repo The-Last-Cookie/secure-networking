@@ -23,19 +23,19 @@ class Supply:
 
 		self.ina_supply = INA219(0.00725, busnum=self._device_bus, address=0x40)
 		self.ina_supply.configure()
-		
+
 	def voltage(self) -> int:
 		"""
 		Returns milliVolt
 		"""
 		return self.ina_supply.voltage()
-	
+
 	def current(self) -> int:
 		"""
 		Returns milliAmpere
 		"""
 		return self.ina_supply.current()
-	
+
 	def power(self) -> int:
 		"""
 		Returns milliWatt
@@ -46,7 +46,7 @@ class Supply:
 class Battery:
 	def __init__(self) -> None:
 		self._device_bus = 1
-		
+
 		self.ina_batt = INA219(0.005, busnum=self._device_bus, address=0x45)
 		self.ina_batt.configure()
 
@@ -107,11 +107,11 @@ class Bus:
 	def ups_voltage(self) -> str:
 		milliVolt = join_bytes(self._read_byte(2), self._read_byte(1))
 		return f"{milliVolt} mV"
-	
+
 	def pi_voltage(self) -> str:
 		milliVolt = join_bytes(self._read_byte(4), self._read_byte(3))
 		return f"{milliVolt} mV"
-	
+
 	def charging_status(self) -> str:
 		if (join_bytes(self._read_byte(8), self._read_byte(7))) > 4000:
 			return "USB Type C"
@@ -125,18 +125,18 @@ class Bus:
 		Returns °C
 		"""
 		return join_bytes(self._read_byte(12), self._read_byte(11))
-	
+
 	@property
 	def protection_volt(self) -> int:
 		volt = join_bytes(self._read_byte(18), self._read_byte(17))
 		self._protection_volt = volt
 		return self._protection_volt
-	
+
 	@protection_volt.setter
 	def protection_volt(self, volt: int):
 		if not(0 <= volt <= 4500):
 			raise ValueError
-		
+
 		self._write_byte(self._device_addr, 17, volt & 0xFF)
 		self._write_byte(self._device_addr, 18, (volt >> 8) & 0xFF)
 		self._protection_volt = volt
@@ -169,7 +169,7 @@ class Bus:
 
 		if mode == 1:
 			return "Normal operation mode"
-		
+
 		return "Power off"
 
 	@property
@@ -177,7 +177,7 @@ class Bus:
 		seconds = self._read_byte(24)
 		self._shutdown_countdown = seconds
 		return self._shutdown_countdown
-	
+
 	@shutdown_countdown.setter
 	def shutdown_countdown(self, countdown):
 		if countdown == 0:
@@ -210,7 +210,7 @@ class Bus:
 		seconds = self._read_byte(26)
 		self._restart_countdown = seconds
 		return self._restart_countdown
-	
+
 	@restart_countdown.setter
 	def restart_countdown(self, countdown):
 		if countdown == 0:
