@@ -21,40 +21,40 @@ class Supply:
 	def __init__(self) -> None:
 		self._device_bus = 1
 
-		self.ina_supply = INA219(0.00725, busnum=self._device_bus, address=0x40)
-		self.ina_supply.configure()
+		self._ina = INA219(0.00725, busnum=self._device_bus, address=0x40)
+		self._ina.configure()
 
 	def voltage(self) -> int:
 		"""
 		Returns milliVolt
 		"""
-		return self.ina_supply.voltage()
+		return self._ina.voltage()
 
 	def current(self) -> int:
 		"""
 		Returns milliAmpere
 		"""
-		return self.ina_supply.current()
+		return self._ina.current()
 
 	def power(self) -> int:
 		"""
 		Returns milliWatt
 		"""
-		return self.ina_supply.power()
+		return self._ina.power()
 
 
 class Battery:
 	def __init__(self) -> None:
 		self._device_bus = 1
 
-		self.ina_batt = INA219(0.005, busnum=self._device_bus, address=0x45)
-		self.ina_batt.configure()
+		self._ina = INA219(0.005, busnum=self._device_bus, address=0x45)
+		self._ina.configure()
 
 	def voltage(self) -> int:
 		"""
 		Returns milliVolt
 		"""
-		return self.ina_batt.voltage()
+		return self._ina.voltage()
 
 	def status(self) -> dict:
 		"""
@@ -62,8 +62,8 @@ class Battery:
 		"""
 		try:
 			return {
-				"current": self.ina_batt.current(),
-				"power": self.ina_batt.power(),
+				"current": self._ina.current(),
+				"power": self._ina.power(),
 				"error": "",
 				"message": ""
 			}
