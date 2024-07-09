@@ -128,9 +128,7 @@ class Bus:
 
 	@property
 	def protection_volt(self) -> int:
-		volt = join_bytes(self._read_byte(18), self._read_byte(17))
-		self._protection_volt = volt
-		return self._protection_volt
+		return join_bytes(self._read_byte(18), self._read_byte(17))
 
 	@protection_volt.setter
 	def protection_volt(self, volt: int):
@@ -139,7 +137,6 @@ class Bus:
 
 		self._write_byte(17, volt & 0xFF)
 		self._write_byte(18, (volt >> 8) & 0xFF)
-		self._protection_volt = volt
 
 	def battery_capacity(self) -> int:
 		"""
