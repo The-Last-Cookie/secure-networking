@@ -122,7 +122,7 @@ class Bus:
 
 	def battery_temperature(self) -> int:
 		"""
-		Returns °C
+		Returns battery temperature in °C
 		"""
 		return join_bytes(self._read_byte(12), self._read_byte(11))
 
@@ -143,16 +143,16 @@ class Bus:
 
 	def battery_capacity(self) -> int:
 		"""
-		Returns %
+		Returns capacity between 1 and 100 %
 		"""
 		return join_bytes(self._read_byte(20), self._read_byte(19))
 
-	# How often the processor asks the INA for data and writes into its registers
 	@property
 	def sample_period(self) -> int:
-		minutes = join_bytes(self._read_byte(22), self._read_byte(21))
-		self._sample_period = minutes
-		return self._sample_period
+		"""
+		How often in minutes the processor asks the INA for data and writes into its registers
+		"""
+		return join_bytes(self._read_byte(22), self._read_byte(21))
 
 	@sample_period.setter
 	def sample_period(self, frequency: int) -> str:
@@ -162,7 +162,6 @@ class Bus:
 		# convert to single byte
 		self._write_byte(21, frequency & 0xFF)
 		self._write_byte(22, (frequency >> 8) & 0xFF)
-		self._sample_period = frequency
 
 	def operation_mode(self) -> str:
 		mode = self._read_byte(23)
@@ -174,55 +173,44 @@ class Bus:
 
 	@property
 	def shutdown_countdown(self) -> int:
-		seconds = self._read_byte(24)
-		self._shutdown_countdown = seconds
-		return self._shutdown_countdown
+		return self._read_byte(24)
 
 	@shutdown_countdown.setter
 	def shutdown_countdown(self, countdown):
 		if countdown == 0:
 			self._write_byte(24, 0)
-			self._shutdown_countdown = countdown
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError
 
 		self._write_byte(24, countdown)
-		self._shutdown_countdown = countdown
 
 	@property
 	def automatic_shutdown_protection(self) -> bool:
 		"""
 		When the battery becomes low, the UPS automatically shuts down and turns on as soon as AC is available again.
 		"""
-		back_to_ac = self._read_byte(25)
-		self._back_to_ac = back_to_ac
-		return self._back_to_ac
+		return self._read_byte(25)
 
 	@automatic_shutdown_protection.setter
 	def automatic_shutdown_protection(self, isActive: bool):
-		self._back_to_ac = isActive
 		self._write_byte(25, isActive)
 
 	@property
 	def restart_countdown(self) -> int:
-		seconds = self._read_byte(26)
-		self._restart_countdown = seconds
-		return self._restart_countdown
+		return self._read_byte(26)
 
 	@restart_countdown.setter
 	def restart_countdown(self, countdown):
 		if countdown == 0:
 			self._write_byte(26, 0)
-			self._restart_countdown = countdown
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError
 
 		self._write_byte(26, countdown)
-		self._restart_countdown = countdown
 
 	def uptime(self) -> int:
 		"""
