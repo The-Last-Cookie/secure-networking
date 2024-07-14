@@ -231,6 +231,12 @@ class Bus:
 		"""
 		return join_bytes(self._read_byte(39), self._read_byte(38), self._read_byte(37), self._read_byte(36))
 
+	def version(self) -> int:
+		"""
+		Returns the firmware version installed on the UPS.
+		"""
+		return join_bytes(self._read_byte(41), self._read_byte(40))
+
 	def serial_number(self) -> str:
 		uid0 = "%08X" % join_bytes(self._read_byte(243), self._read_byte(242), self._read_byte(241), self._read_byte(240))
 		uid1 = "%08X" % join_bytes(self._read_byte(247), self._read_byte(246), self._read_byte(245), self._read_byte(244))
