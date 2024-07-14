@@ -55,7 +55,7 @@ aReceiveBuf.append(0x00)
 for i in range(1, 255):
     aReceiveBuf.append(bus.read_byte_data(DEVICE_ADDR, i))
 
-# Enable Back-to-AC fucntion.
+# Enable Back-to-AC function.
 # Enable: write 1 to register 0x19 == 25
 # Disable: write 0 to register 0x19 == 25
 
