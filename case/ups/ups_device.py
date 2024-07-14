@@ -151,6 +151,9 @@ class Bus:
 		if not(0 <= volt <= 4500):
 			raise ValueError("The protection voltage must be between 0 and 4500.")
 
+		if self.protection_volt == volt:
+			return
+
 		self._write_byte(17, volt & 0xFF)
 		self._write_byte(18, (volt >> 8) & 0xFF)
 
@@ -172,6 +175,9 @@ class Bus:
 		if not(1 <= frequency <= 1440):
 			raise ValueError("The sample period must be between 1 and 1440.")
 
+		if self.sample_period == frequency:
+			return
+
 		# convert to single byte
 		self._write_byte(21, frequency & 0xFF)
 		self._write_byte(22, (frequency >> 8) & 0xFF)
@@ -191,11 +197,15 @@ class Bus:
 	@shutdown_countdown.setter
 	def shutdown_countdown(self, countdown):
 		if countdown == 0:
-			self._write_byte(24, 0)
+			if self.shutdown_countdown != countdown:
+				self._write_byte(24, 0)
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError("The shutdown countdown may range from 10 to 255 seconds.")
+
+		if self.shutdown_countdown == countdown:
+			return
 
 		self._write_byte(24, countdown)
 
@@ -208,6 +218,9 @@ class Bus:
 
 	@automatic_shutdown_protection.setter
 	def automatic_shutdown_protection(self, isActive: bool):
+		if self.automatic_shutdown_protection == isActive:
+			return
+
 		self._write_byte(25, isActive)
 
 	@property
@@ -217,11 +230,15 @@ class Bus:
 	@restart_countdown.setter
 	def restart_countdown(self, countdown):
 		if countdown == 0:
-			self._write_byte(26, 0)
+			if self.restart_countdown != countdown:
+				self._write_byte(26, 0)
 			return
 
 		if not(10 <= countdown <= 255):
 			raise ValueError("The restart countdown may range from 10 to 255 seconds.")
+
+		if self.restart_countdown == countdown:
+			return
 
 		self._write_byte(26, countdown)
 
