@@ -4,7 +4,7 @@ from ina219 import INA219, DeviceRangeError
 
 def join_bytes(*args: int) -> int:
 	"""
-	Converts bytes arranged in big-endian format (MSB) into their integer value
+	Converts up to 4 bytes arranged in big-endian format (MSB) into their integer value
 	"""
 
 	if len(args) > 4:
@@ -77,7 +77,7 @@ class Battery:
 
 
 class Bus:
-	def __init__(self, protection_voltage=3700, sample_period=2, shutdown_countdown=10, restart_countdown=10) -> None:
+	def __init__(self, protection_voltage=3500, sample_period=2, shutdown_countdown=10, restart_countdown=10) -> None:
 		self._device_bus = 1
 		self._device_addr = 0x17 # Address on which the processor (STM32) is available via the bus
 
@@ -97,7 +97,7 @@ class Bus:
 		Return: int
 		"""
 		if not(1 <= byte <= 256):
-			raise ValueError
+			raise ValueError("The accessible byte sectors range from 1 to 256.")
 
 		return self._bus.read_byte_data(self._device_addr, byte)
 
@@ -133,14 +133,14 @@ class Bus:
 	@protection_volt.setter
 	def protection_volt(self, volt: int):
 		if not(0 <= volt <= 4500):
-			raise ValueError
+			raise ValueError("The protection voltage must be between 0 and 4500.")
 
 		self._write_byte(17, volt & 0xFF)
 		self._write_byte(18, (volt >> 8) & 0xFF)
 
-	def battery_capacity(self) -> int:
+	def battery_remaining(self) -> int:
 		"""
-		Returns capacity between 1 and 100 %
+		Returns remaining energy between 1 and 100 %
 		"""
 		return join_bytes(self._read_byte(20), self._read_byte(19))
 
@@ -154,7 +154,7 @@ class Bus:
 	@sample_period.setter
 	def sample_period(self, frequency: int) -> str:
 		if not(1 <= frequency <= 1440):
-			raise ValueError
+			raise ValueError("The sample period must be between 1 and 1440.")
 
 		# convert to single byte
 		self._write_byte(21, frequency & 0xFF)
@@ -179,7 +179,7 @@ class Bus:
 			return
 
 		if not(10 <= countdown <= 255):
-			raise ValueError
+			raise ValueError("The shutdown countdown may range from 10 to 255 seconds.")
 
 		self._write_byte(24, countdown)
 
@@ -205,7 +205,7 @@ class Bus:
 			return
 
 		if not(10 <= countdown <= 255):
-			raise ValueError
+			raise ValueError("The restart countdown may range from 10 to 255 seconds.")
 
 		self._write_byte(26, countdown)
 
