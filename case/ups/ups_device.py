@@ -104,6 +104,22 @@ class Bus:
 	def _write_byte(self, index: int, byte: int) -> None:
 		self._bus.write_byte_data(self._device_addr, index, byte)
 
+	def open(self):
+		"""
+		Explicitly opens the i2c connection.
+
+		Caution: This is only needed if the connection is reused after it has been explicitly closed.
+		"""
+		self._bus.open(self._device_bus)
+
+	def close(self):
+		"""
+		Closes the i2c connection.
+
+		Recommended to initiate before program exit.
+		"""
+		self._bus.close()
+
 	def ups_voltage(self) -> str:
 		milliVolt = join_bytes(self._read_byte(2), self._read_byte(1))
 		return f"{milliVolt} mV"
