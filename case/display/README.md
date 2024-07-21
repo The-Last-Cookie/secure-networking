@@ -6,11 +6,18 @@ Script to show system and UPS statistics on a Raspberry Pi with [UPS Plus](https
 
 ### Prerequisites
 
-If you're using Raspbian/Raspberry Pi OS, you'll need to enable I2C using `raspi-config` [or dtoverlay=i2c I think?]. You'll then need to install several dependencies with `sudo apt install git i2c-tools python3-pip python3-smbus2 python3-setuptools python3-pil python3-rpi.gpio libraspberrypi-bin`.
+If you're using Raspbian/Raspberry Pi OS, you'll need to enable I2C using `raspi-config` [or dtoverlay=i2c I think?]. You'll then need to install several dependencies with `sudo apt install i2c-tools python3-rpi.gpio libraspberrypi-bin`.
 
-You'll also need to install the Adafruit INA219 library: `sudo pip3 install pi-ina219`.
+In a python venv, install the required dependencies:
 
-Next, you'll need to download Adafruit's Python library for the OLED display. `git clone https://github.com/adafruit/Adafruit_Python_SSD1306.git` (the new library is [here](https://github.com/adafruit/Adafruit_CircuitPython_SSD1306)).  Then `cd Adafruit_Python_SSD1306.git`, `sudo python3 setup.py install`.
+```sh
+python3.11 -m pip install smbus2
+python3.11 -m pip install pi-ina219
+python3.11 -m pip install pillow
+# pip install Adafruit-SSD1306 --> seems to be an old library
+```
+
+Next, you'll need to download Adafruit's Python library for the OLED display. `git clone https://github.com/adafruit/Adafruit_Python_SSD1306.git` (the new library is [here](https://github.com/adafruit/Adafruit_CircuitPython_SSD1306)). Then `cd Adafruit_Python_SSD1306.git`, `sudo python3 setup.py install`.
 
 Finally, you'll need to download the font files from https://www.dafont.com/pixel-operator.font. The font file `PixelOperator.ttf` will need to be placed in the same directory as the executable script.
 

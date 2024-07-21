@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 # Copyright (c) 2017 Adafruit Industries
 # Author: Tony DiCola & James DeVito
 #
@@ -22,54 +20,10 @@
 # THE SOFTWARE.
 
 import time
-
-
-# https://pypi.org/project/Adafruit-SSD1306/
-# https://pypi.org/project/adafruit-circuitpython-ssd1306/
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_SSD1306
-
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
 import subprocess
 
 from ups_device import Bus, Supply, Battery
-
-
-class Screen:
-    def __init__(self) -> None:
-        self._adafruit = Adafruit_SSD1306.SSD1306_128_64(rst=None)
-        self._adafruit.begin()
-        self._adafruit.clear()
-        self._adafruit.display()
-
-        self.width = self._adafruit.width
-        self.height = self._adafruit.height
-        self.font = ImageFont.truetype('PixelOperator.ttf', 16)
-
-        # Make sure to create image with mode '1' for 1-bit color.
-        self._image = Image.new('1', (self.width, self.height)) # stellt den Rahmen (Frame) dar, in dem alles gezeichnet wird
-        self._draw = ImageDraw.Draw(self._image)
-
-        self.clear()
-
-    def clear(self):
-        self._draw.rectangle((0,0,self.width,self.height), outline=0, fill=0)
-
-    def text(self, position, content):
-        self._draw.text(position, content, font=self.font, fill=255)
-
-    def display(self):
-        self._adafruit.image(self._image)
-        self._adafruit.display()
-
-
-DEVICE_BUS = 1
-DEVICE_ADDR = 0x17
-PROTECT_VOLT = 3700
-SAMPLE_TIME = 2
+from screen import Screen
 
 
 screen = Screen()
@@ -91,15 +45,15 @@ while True:
 
     # Shell scripts for system monitoring from here: https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
     cmd = "hostname -I | cut -d\' \' -f1"
-    IP = subprocess.check_output(cmd, shell=True)
+    IP = subprocess.check_output(cmd, shell=True, encoding='utf-8')
     cmd = "top -bn1 | grep load | awk '{printf \"CPU: %.2f\", $(NF-2)}'"
-    CPU = subprocess.check_output(cmd, shell=True)
+    CPU = subprocess.check_output(cmd, shell=True, encoding='utf-8')
     cmd = "free -m | awk 'NR==2{printf \"Mem: %s/%sMB %.2f%%\", $3,$2,$3*100/$2 }'"
-    MemUsage = subprocess.check_output(cmd, shell=True)
+    MemUsage = subprocess.check_output(cmd, shell=True, encoding='utf-8')
     cmd = "df -h | awk '$NF==\"/\"{printf \"Disk: %d/%dGB %s\", $3,$2,$5}'"
-    Disk = subprocess.check_output(cmd, shell=True)
+    Disk = subprocess.check_output(cmd, shell=True, encoding='utf-8')
     cmd = "vcgencmd measure_temp | cut -f 2 -d '='"
-    temp = subprocess.check_output(cmd, shell=True)
+    temp = subprocess.check_output(cmd, shell=True, encoding='utf-8')
 
     piVolts = round(supply.voltage(), 2)
     piCurrent = round (supply.current())
