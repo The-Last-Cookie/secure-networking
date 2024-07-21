@@ -4,6 +4,16 @@
 # also check that the batteries stay within a certain temperature limit (80 °C)!
 
 
+bus = Bus()
+print("Pi voltage: " + bus.pi_voltage())
+print("Charging status: " + bus.charging_status())
+print("Uptime: " + str(bus.uptime()))
+print("Serial: " + bus.serial_number())
+print("Version: " + str(bus.version()))
+print("Battery temp: " + str(bus.battery_temperature()))
+print("Battery remaining: " + str(bus.battery_remaining()) + " %")
+bus._bus.close()
+
 if (aReceiveBuf[8] << 8 | aReceiveBuf[7]) > 4000:
     print('Currently charging via Type C Port.')
 

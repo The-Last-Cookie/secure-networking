@@ -64,19 +64,18 @@ class Battery:
 			return {
 				"current": self._ina.current(),
 				"power": self._ina.power(),
-				"error": "",
-				"message": ""
+				"error": None
 			}
 		except DeviceRangeError as e:
 			return {
 				"current": None,
 				"power": None,
-				"error": "DeviceRangeError",
-				"message": str(e)
+				"error": "DeviceRangeError: " + str(e)
 			}
 
 
 class Bus:
+	# TODO: what is protection voltage and to what value should it be set?
 	def __init__(self, protection_voltage=3500, sample_period=2, shutdown_countdown=10, restart_countdown=10) -> None:
 		self._device_bus = 1
 		self._device_addr = 0x17 # Address on which the processor (STM32) is available via the bus
