@@ -13,6 +13,8 @@ Write the Raspberry Pi image to a SD card with the Raspberry Pi imager.
 
 Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (32 bit)` is chosen.
 
+<!--There's now also a 64 bit image available?-->
+
 To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and passwort combination or a public key.
 
 After the installation has finished, let the device connect to the network and find out its IP address.
