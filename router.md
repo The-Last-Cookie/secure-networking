@@ -28,6 +28,12 @@ In Pi-hole, only the Fritz!Box should be added as an upstream server. Check `Use
 
 The router is now defined as the upstream server of Pi-hole, while the public dns servers are the upstream servers of the router.
 
+So, the final path DNS requests take, looks like this:
+
+```txt
+Client -> Pi-hole -> Router -> Public DNS Server
+```
+
 By not using Conditional Forwarding and defining public upstream servers directly in Pi-hole, devices will only appear as IP addresses and also won't be resolvable by their hostname.[^kuketz]
 
 ## Allowing access only via Pi-hole
