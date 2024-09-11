@@ -117,6 +117,28 @@ The service behind Nessus Essentials is called `nessusd` and its status can be r
 
 There is also the `/opt/nessus/sbin/nessuscli` tool to e.g. reset the password of the web interface.
 
+### License activation
+
+When not using Nessus for a long time or when the license expires, it may be that Nessus is not able to download the newest core update and the current plugin set. Upon trying to update Nessus via the terminal, the following message will appear:
+
+```txt
+Could not validate this preference file. Have installation files been copied from another system?
+```
+
+A new licence key may be obtained by visiting the [Tenable Nessus® Essentials](https://www.tenable.com/products/nessus/nessus-essentials) register page. An account creation is not required. A new licence key will be provided even if one submitted their name and mail address before.
+
+Enter the new licence code in the `Settings` tab, under `Activation Code`. After that, Nessus needs to be [updated](#installing-updates).
+
+### Installing updates
+
+Before, it is recommended to make a backup with `/opt/nessus/sbin/nessuscli backup --create <name>`
+
+```sh
+sudo systemctl stop nessusd.service
+sudo /opt/nessus/sbin/nessuscli update --all
+sudo systemctl start nessusd.service
+```
+
 ## Annotations
 
 [^0D53a00007ZjncaCAB]: [Steve Gillham-1 in "Looking for clarification on Essentials 16 limit."](https://community.tenable.com/s/question/0D53a00007ZjncaCAB/looking-for-clarification-on-essentials-16-limit)

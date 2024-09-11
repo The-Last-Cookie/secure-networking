@@ -21,6 +21,16 @@
 - **External connection:** If a service needs to be accessed from an external network, a VPN should be used to connect to the home network. Port forwarding is possible too but presents a security risk because the port is publicly exposed.
 - **Web interfaces:** Use HTTPS for web interfaces where possible
 
+### Network sharing
+
+This PC --> right click on c --> Zugriff gewähren auf --> Freigabe --> Diesen Ordner freigeben
+
+--> Passwortschutz?
+
+https://www.windowspower.de/festplatte-im-netzwerk-freigeben/
+https://support.microsoft.com/de-de/windows/dateifreigabe-%C3%BCber-ein-netzwerk-in-windows-b58704b2-f53a-4b82-7bc1-80f9994725bf
+https://www.tecchannel.de/a/komplette-laufwerke-im-netzwerk-freigeben,3341601
+
 ## Creating a content provider device
 
 In normal operation, a raspberry pi becomes 60 to 80 °C warm. Usually, the processor throttles itself if it becomes too hot.
@@ -29,7 +39,9 @@ raspberry pi that has pihole and other services/utilities running
 
 Serving several services on the same device, over different domains:
 
-Setting up a [reverse proxy](https://superuser.com/questions/394078/how-can-i-map-a-domain-name-to-an-ip-address-and-port) on the raspberry pi allows for multiple domains to map to different ports on the same physical device. Another possibility would be to configure the web server to serve certain content depending on the port. Otherwise, you can only use different ports and the same domain or use a separate physical device with another IP address to have two dns entries in the dns server.
+Setting up a [reverse proxy](https://superuser.com/questions/394078/how-can-i-map-a-domain-name-to-an-ip-address-and-port) on the raspberry pi allows for multiple domains to map to different ports on the same physical device.
+
+Another possibility would be to configure the web server to serve certain content depending on the domain, implemented via virtual hosts. Several services run on one physical server and they are all accessed from the outside via e.g. port 80, but over different domains. This might be difficult management wise though, as the services (i.e. daemons) would need to be linked to the self-configured web server. The web server then manages those daemons via virtual hosts. Fore more information, see [Different VirtualHosts with the same port](https://stackoverflow.com/questions/6069892/different-virtualhosts-with-the-same-port).
 
 [How To Protect Your Linux Server From Hackers!](https://www.youtube.com/watch?v=fKuqYQdqRIs)
 
@@ -44,7 +56,9 @@ Using Raspberry Pi as firewall with uncomplicated firewall (`ufw`)? -> This is o
 
 ## Endpoint Detection and Response (EDR)
 
-While vulnerability passively increases the device's security, actively scanning for threats might be useful too.<!--IDS/IPS might be a topic here as well-->
+While vulnerability passively increases the device's security, actively scanning for threats might be useful too.
+
+IDS/IPS might be a topic here as well: [Building my home intrusion detection system (Suricata & ELK on a Pi4)](https://www.reddit.com/r/raspberry_pi/comments/np1a8f/building_my_home_intrusion_detection_system/)
 
 ## Annotations
 
