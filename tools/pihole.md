@@ -13,6 +13,8 @@ Write the Raspberry Pi image to a SD card with the Raspberry Pi imager.
 
 Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (32 bit)` is chosen.
 
+<!--There's now also a 64 bit image available?-->
+
 To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and passwort combination or a public key.
 
 After the installation has finished, let the device connect to the network and find out its IP address.
@@ -28,6 +30,14 @@ While installing, note down the web interface password that is shown in the term
 Now add the Raspberry Pi's IP address as a DNS to your router's settings.[^router-settings]
 
 The web interface is now accessible via `http://<IP address>/admin`. The standard port of the web interface is 80.
+
+### Pihole v6
+
+The next major version uses a different webserver. Thus all PHP components and the old webserver should be removed upon migration.
+
+```sh
+apt remove php lighttpd
+```
 
 ## Serving the pihole service over SSL
 
