@@ -95,4 +95,4 @@ while True:
         screenC = 0
 
     screen.display()
-    time.sleep(.1)
+    time.sleep(.5)

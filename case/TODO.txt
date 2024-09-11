@@ -1,5 +1,0 @@
-ups firmware herunterladen
-Reverse engineering
-ups firmware installieren
-python api für ina und smbus schreiben? --> siehe demo code
-display programmieren

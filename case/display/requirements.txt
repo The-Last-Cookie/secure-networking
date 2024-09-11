@@ -1,0 +1,8 @@
+Adafruit-GPIO==1.0.3
+Adafruit-PureIO==1.1.11
+Adafruit-SSD1306==1.6.2
+mock==5.1.0
+pi-ina219==1.4.1
+pillow==10.4.0
+smbus2==0.4.3
+spidev==3.6

@@ -10,3 +10,9 @@
 8. sudo systemctl start [service]
 
 eventuell denkbar auch als crontab job
+
+## Cables
+
+- rot - 5V Power (4)
+- schwarz - GND (6)
+- blau - GPIO 17 (11)

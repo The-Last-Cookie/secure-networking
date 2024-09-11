@@ -79,7 +79,7 @@ def install_firmware():
     bus.close()
 
 download_firmware()
-install_firmware()
+#install_firmware()
 
 os.system("sudo halt")
 while True:

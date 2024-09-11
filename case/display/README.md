@@ -33,6 +33,13 @@ Then put the systemd unit file in the correct place: `sudo cp stats.service /etc
 
 Then tell systemd to re-scan the unit files with `sudo systemctl daemon-reload`, and start this unit using `sudo systemctl enable --now stats`.
 
+## Cables
+
+- black - GND (9)
+- grey - GPIO 3 I2C SCL (5)
+- violette - GPIO 2 I2C SDA (3)
+- white - 3.3V Power (1)
+
 ## Acknowledgements
 
 Original source: https://www.the-diy-life.com/mini-raspberry-pi-server-with-built-in-ups/

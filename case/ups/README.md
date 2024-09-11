@@ -7,11 +7,10 @@ sudo raspi-config nonint do_i2c 0
 
 sudo apt install i2c-tools
 
-# without activating venv
-/path/to/venv/bin/pip install pi-ina219
-
 # with activating venv
 python3.11 -m pip install smbus2
+python3.11 -m pip install pi-ina219
+# which pip? this worked as well (not activating venv): /path/to/venv/bin/pip
 ```
 
 More information: <https://wiki.52pi.com/index.php/EP-0136> (registers and installation instructions for example)

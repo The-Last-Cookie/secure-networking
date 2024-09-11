@@ -6,10 +6,6 @@ https://www.the-diy-life.com/mini-raspberry-pi-server-with-built-in-ups/
 ups python interface
 https://github.com/geeekpi/upsplus/blob/main/install.sh --> be careful! the program posts internal monitoring values to 52pi. These requests should be removed before the script is executed/installed
 --> though api.52pi.com/update might be needed
-it might be possible to get a nice looking api out of that (look at demo code):
-custom_interface = custom_INA219()
-custom_interface.serial_number()
-with an internal function read_buffer(start, end)
 
 https://wiki.52pi.com/index.php/EP-0136
 Verwendeter Prozessor: sgs thomson 32F030F4P6
@@ -26,6 +22,13 @@ cpu load
 ladestatus des UPS (wie voll sind die Batterien)
 ladestatus (wie wird gerade geladen)
 https://github.com/danb35/raspi-ups-stats/tree/master
+
+TODO:
+ups firmware herunterladen
+Reverse engineering
+
+(ups firmware installieren)
+display programmieren
 
 
 
