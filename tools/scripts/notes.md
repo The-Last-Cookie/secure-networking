@@ -31,7 +31,7 @@ Set-SmbServerConfiguration -AutoShareServer  $False -AutoShareWorkstation $False
 
 ### Network logons
 
-<!--Only for Windows XP?-->
+*Notice: This setting is only required when scanning Windows XP. Scans for Windows 7 and above use `LocalAccountTokenFilterPolicy`.[^force-guest]*
 
 Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves'.
 
@@ -125,3 +125,7 @@ netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_445_private_SMB_In
 ```
 
 See also the preliminary script.
+
+## Annotations
+
+[^force-guest]: [See here](https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md#confirm-forceguest-is-set-to-0-classic-is-required-for-nessus-seemingly---windows-xp-only-see-localaccounttokenfilterpolicy-for-win-7-and-above)
