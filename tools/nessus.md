@@ -79,7 +79,7 @@ Furthermore, add the registry key `LocalAccountTokenFilterPolicy` in `HKEY_LOCAL
 
 In the `Services` dialogue (*services.msc*), remote registry must be activated (set to `Automatic`) so that Nessus can scan the system for insecure registry configurations.[^remote-registry]
 
-#### Administrative shares
+#### File and printer sharing
 
 File and printer sharing needs to be activated for the scan.
 
