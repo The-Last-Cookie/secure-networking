@@ -48,10 +48,6 @@ Set-Service -Name Winmgmt -StartupType Automatic
 Start-Service -Name Winmgmt
 ```
 
-### Lanman server
-
-"Server" service must be on Automatic for administrative access.
-
 ### Local administrator
 
 Ensure the proper user/group is in the local Administrator group. For the scan, the nessus user must be part of the local admin group.
