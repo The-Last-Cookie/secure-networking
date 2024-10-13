@@ -1,0 +1,3 @@
+# Check if WMI is running, just like in the remote registry module
+
+Get-Service Winmgmt | Select-Object -Property Name, StartType, Status

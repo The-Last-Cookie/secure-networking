@@ -1,0 +1,17 @@
+function ActivatePrinterSharing
+{
+	#[CmdletBinding()]
+	#param (
+	#	[Parameter()]
+	#	[TypeName]
+	#	$ParameterName
+	#)
+
+    # File and printer sharing
+    # Disable-NetAdapterBinding -Name [name] -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
+    # does not work seemingly? the UI setting does not change
+	# maybe restart is required?
+
+    # netsh advfirewall firewall set rule group="File and Printer sharing" new enable=False
+    # maybe
+}
