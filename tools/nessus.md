@@ -83,7 +83,7 @@ In the `Services` dialogue (*services.msc*), remote registry must be activated (
 
 File and printer sharing needs to be activated for the scan.
 
-<!--apparently this works?-->
+*TODO: Commands need further testing before they can confidently be added as a standard routine in the script.*
 
 ```ps
 Get-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
@@ -93,7 +93,9 @@ Disable-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsof
 
 #### smb stuff
 
-- https://learn.microsoft.com/en-us/previous-versions/orphan-topics/ws.11/cc731957(v=ws.11)?redirectedfrom=MSDN
+TODO:
+
+- <https://learn.microsoft.com/en-us/previous-versions/orphan-topics/ws.11/cc731957(v=ws.11)?redirectedfrom=MSDN>
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-locally
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-through-remote-desktop-services
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/microsoft-network-server-digitally-sign-communications-always
