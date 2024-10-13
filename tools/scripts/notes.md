@@ -11,13 +11,27 @@ What I imagine for this script in the future:
 
 ## Missing checks?
 
-### Enable remote file shares (client and server)
+### Enable admin remote file shares (client and server)
+
+*Notice: Restart required for changes to take effect.*
 
 Nessus needs access to remote file shares like C$ and ADMIN$.
 
 Set AutoShareServer and AutoShareWks in `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters` to 1 or remove them.
 
+```ps
+Get-SmbServerConfiguration | Select AutoShareServer,AutoShareWorkstation
+
+# Enable
+Set-SmbServerConfiguration -AutoShareServer $True -AutoShareWorkstation $True -Confirm:$false
+
+# Disable
+Set-SmbServerConfiguration -AutoShareServer  $False -AutoShareWorkstation $False -Confirm:$false
+```
+
 ### Network logons
+
+*Notice: This setting is only required when scanning Windows XP. Scans for Windows 7 and above use `LocalAccountTokenFilterPolicy`.[^force-guest]*
 
 Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves'.
 
@@ -27,16 +41,12 @@ This policy setting determines how network logons that use local accounts are au
 
 ### WMI
 
-Check if WMI is activated
+Check if WMI is enabled and activated
 
 ```ps
 Set-Service -Name Winmgmt -StartupType Automatic
 Start-Service -Name Winmgmt
 ```
-
-### Lanman server
-
-"Server" service must be on Automatic for administrative access.
 
 ### Local administrator
 
@@ -50,6 +60,10 @@ $WMI.GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -eq $MachineName}
 $WMI.GetRelated("Win32_Group") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
 $WMI.GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
 $WMI.GetRelated("Win32_Group") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
+
+# or
+
+Get-LocalGroupMember -Group 'Administratoren'
 ```
 
 ### Windows 10 > 1709 - Server SPN Validation Enabled
@@ -82,10 +96,32 @@ else {"0"}
 
 Firewall needs to be disabled (wf.msc)
 
-Only needed for communication with VM?
+<!--Only needed for communication with VM?-->
 
 ```ps
 Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
+
+# or
+
+netsh firewall set opmode enable
+netsh firewall set opmode disable
+
+# or
+
+netsh advfirewall firewall add rule dir=in name ="Nessus_Allow_WMI-in_Private" program=%systemroot%\system32\svchost.exe service=winmgmt action=allow protocol=TCP localport=any profile=private
+netsh advfirewall firewall add rule dir=in action=allow protocol=TCP localport=135 name="Nessus_Allow_TCP_135_private_DCOM_In" profile=private
+netsh advfirewall firewall add rule dir=in action=allow protocol=TCP localport=139 name="Nessus_Allow_TCP_139_private_NB_Session_In" profile=private
+netsh advfirewall firewall add rule dir=in action=allow protocol=TCP localport=445 name="Nessus_Allow_TCP_445_private_SMB_In" profile=private
+
+# remove rules:
+netsh advfirewall firewall delete rule name="Nessus_Allow_WMI-in_Private" profile=private
+netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_135_private_DCOM_In" profile=private
+netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_139_private_NB_Session_In" profile=private
+netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_445_private_SMB_In" profile=private
 ```
 
 See also the preliminary script.
+
+## Annotations
+
+[^force-guest]: [See here](https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md#confirm-forceguest-is-set-to-0-classic-is-required-for-nessus-seemingly---windows-xp-only-see-localaccounttokenfilterpolicy-for-win-7-and-above)

@@ -39,12 +39,23 @@ To store passwords for these dedicated accounts, Bitwarden might be useful to ha
 - Perform frequent **password rotation** for privileged accounts more often than the "normal" internal standard.
 - Enable accounts only when the time window for scans is active; **disable accounts** at other times.[^disable-account]
 - On non-Windows systems, do not allow remote root logins. Configure your scans to **utilize escalation** such as su or sudo.
-- Use **key authentication** instead of password authentication.
+- (Use **key authentication** instead of password authentication.)
 
 ### Protecting credentials
 
 - https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts
 - https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts
+
+### Common Scan Failure Indicators
+
+The scan may contain `Info` segments that contain indicators whether the scan executed successfully:
+
+1. **WMI Not Available:** Indicates that WMI is either not enabled as a service on the target, or WMI-In is not enabled on the software firewall (see the sections Remote Registry, WMI and Firewall for more details).
+2. **Nessus Scan Information (Plugin 19506)** contains the text `Credentialed checks: No`.
+3. **Authentication Failure - Local Checks Not Run:** This often appears if the Remote Registry is not activated.
+4. **Nessus Windows Scan Not Performed with Admin Privileges:** Most likely indicates that the administrative shares are not enabled or that the provided credentials do not belong to an admin account.
+
+On the contrary, `WMI Available` and `Credentials checks: Yes` are a sign of a successful scan.
 
 ## Readiness check
 
@@ -54,7 +65,9 @@ To enable a credentialed scan on **Windows**, the host device needs to be config
 
 The script in this project which applies this configuration automatically should only be used for computers that are not part of any domain.
 
-Inspirations for these checks have been taken from [Nessus-Powershell-Oneliners](https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md) and [Nessus Credentialed Assessment Readiness Check (Windows)](https://github.com/tecnobabble/nessus_win_cred_test)
+Inspirations for these checks have been taken from [Nessus-Powershell-Oneliners](https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md) and [Nessus Credentialed Assessment Readiness Check (Windows)](https://github.com/tecnobabble/nessus_win_cred_test).
+
+The following section details the required settings for a successful scan.
 
 #### User account control (UAC)
 
@@ -66,13 +79,23 @@ Furthermore, add the registry key `LocalAccountTokenFilterPolicy` in `HKEY_LOCAL
 
 In the `Services` dialogue (*services.msc*), remote registry must be activated (set to `Automatic`) so that Nessus can scan the system for insecure registry configurations.[^remote-registry]
 
-#### Administrative shares
+#### File and printer sharing
 
 File and printer sharing needs to be activated for the scan.
 
+*TODO: Commands need further testing before they can confidently be added as a standard routine in the script.*
+
+```ps
+Get-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
+Enable-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
+Disable-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
+```
+
 #### smb stuff
 
-- https://learn.microsoft.com/en-us/previous-versions/orphan-topics/ws.11/cc731957(v=ws.11)?redirectedfrom=MSDN
+TODO:
+
+- <https://learn.microsoft.com/en-us/previous-versions/orphan-topics/ws.11/cc731957(v=ws.11)?redirectedfrom=MSDN>
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-locally
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-through-remote-desktop-services
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/microsoft-network-server-digitally-sign-communications-always
