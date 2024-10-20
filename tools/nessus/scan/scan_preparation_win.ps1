@@ -23,7 +23,7 @@ function Start-Check
 
 	Write-Host ""
 
-	#HandleAdministrativeShares
+	#HandlePrinterSharing
 
 	Write-Host "The system has been prepared for the scan."
 }
