@@ -35,6 +35,17 @@ function RemoteRegistry
 	Set-Service -ComputerName $Configuration.Computer -Name RemoteRegistry -StartupType Disabled -ErrorAction Stop
 }
 
+function WMI
+{
+	param
+	(
+		$Configuration
+	)
+
+	#Stop-Service -InputObject (Get-Service -ComputerName $Configuration.Computer -Name Winmgmt) -ErrorAction Stop
+	Set-Service -ComputerName $Configuration.Computer -Name Winmgmt -StartupType Automatic -ErrorAction Stop
+}
+
 function Restore-Setting
 {
 	param
@@ -50,6 +61,9 @@ function Restore-Setting
 
 		"remote-registry" {
 			RemoteRegistry -Configuration $Configuration
+		}
+		"wmi" {
+			WMI -Configuration $Configuration
 		}
 	}
 }

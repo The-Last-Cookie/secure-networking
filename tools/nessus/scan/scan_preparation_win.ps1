@@ -4,6 +4,7 @@
 
 . .\Modules\UACModule.ps1
 . .\Modules\RemoteRegistryModule.ps1
+. .\Modules\WmiModule.ps1
 
 function Get-Report
 {
@@ -20,6 +21,10 @@ function Start-Check
 	Write-Host ""
 
 	HandleRemoteRegistry
+
+	Write-Host ""
+
+	HandleWMI
 
 	Write-Host ""
 
