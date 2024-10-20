@@ -1,0 +1,9 @@
+# Restart required
+
+Get-SmbServerConfiguration | Select AutoShareServer,AutoShareWorkstation
+
+# Enable
+Set-SmbServerConfiguration -AutoShareServer $True -AutoShareWorkstation $True -Confirm:$false
+
+# Disable
+Set-SmbServerConfiguration -AutoShareServer  $False -AutoShareWorkstation $False -Confirm:$false

@@ -1,2 +1,41 @@
-# Check if user is part of the administrator group
-Get-LocalGroupMember -Group 'Administratoren'
+Import-Module .\Utils\TextUtils.ps1
+
+function EnableAdmin {
+	Add-LocalGroupMember -Group "Administratoren" -Member "nessus-scan"
+}
+
+function HandleAdmin
+{
+	param (
+		$Silent = $false
+	)
+
+	$Computer = [Environment]::MachineName
+	$Accounts = Get-LocalGroupMember -Group 'Administratoren' | Where-Object {$_.PrincipalSource -eq "Local"} | Select Name
+
+	foreach ($Name in $Accounts.Name) {
+		if $Name -eq ($Computer + '\' + 'nessus-scan') {
+			Write-BulletPoint -Text "Nessus scan account configuration is correct."
+			return
+		}
+	}
+
+	$AdminConfig = @{
+		"admin" = @{
+			"Computer" = $Computer
+		}
+	}
+	Save-Setting -Content $AdminConfig
+
+	if ($Silent) {
+		EnableAdmin
+		return
+	}
+
+	$Answer = Read-Host -Prompt "Nessus scan is currently not part of the local admin group. Press 'y' to add it. "
+	if ($Answer -match "y") {
+		EnableAdmin
+	} else {
+		Write-Host "Skipping WMI configuration."
+	}
+}

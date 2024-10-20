@@ -1,0 +1,21 @@
+# setting needs to be off for scan
+# simplify with registry util
+
+try {
+    $SPN_Validation = (Get-ItemProperty Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters -Name SMBServerNameHardeningLevel).SMBServerNameHardeningLevel
+}
+catch {
+    $SPN_Validation = 0
+}
+
+$OS_Name = (gcim Win32_OperatingSystem | Select-Object Name).Name
+
+try {
+    $OS_Release = (Get-ItemProperty "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion" -Name ReleaseID).ReleaseID
+}
+catch {
+    $OS_Release = 0
+}
+
+if ((( $SPN_Validation -eq 1) -or ($SPN_Validation -eq 2)) -and ($OS_Name -match "Windows 10") -and ($OS_Release -ge 1709)) {"1"}
+else {"0"}

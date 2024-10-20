@@ -68,9 +68,9 @@ foreach ($FWService in $FWServices) {
 					$fwIssueFound = 1
 				}
 			}
-			#else {
-			#    Write-Host "The Windows Firewall $($FWProfile.Name) profile is disabled; skipping checks."
-			#}
+			else {
+			    Write-Host "The Windows Firewall $($FWProfile.Name) profile is disabled; skipping checks."
+			}
 		}
 
 		if ($fwIssueFound -ne 1) {
