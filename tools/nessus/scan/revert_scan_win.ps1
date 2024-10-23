@@ -5,6 +5,7 @@
 . .\Modules\UACModule.ps1
 . .\Utils\RegistryUtils.ps1
 . .\Utils\FileUtils.ps1
+. .\Utils\Enums.ps1
 
 function UserAccountControl
 {
@@ -31,8 +32,22 @@ function RemoteRegistry
 		$Configuration
 	)
 
-	Stop-Service -InputObject (Get-Service -ComputerName $Configuration.Computer -Name RemoteRegistry) -ErrorAction Stop
-	Set-Service -ComputerName $Configuration.Computer -Name RemoteRegistry -StartupType Disabled -ErrorAction Stop
+	$RemoteRegistry = Get-Service -ComputerName $Configuration.Computer -Name RemoteRegistry
+
+	Set-Service -ComputerName $Configuration.Computer -Name RemoteRegistry -StartupType $Configuration.StartType -ErrorAction Stop
+	$StartType = ([ServiceStartupType]$Configuration.StartType).ToString()
+	Write-Host "$($Configuration.Computer): Setting startup type of remote registry to $StartType"
+
+	if ($RemoteRegistry.Status -eq [ServiceControllerStatus]::Running -and $Configuration.Status -eq [ServiceControllerStatus]::Stopped) {
+		Write-Host "$($Configuration.Computer): Stopping remote registry"
+		Stop-Service -InputObject ($RemoteRegistry) -ErrorAction Stop
+		return
+	}
+
+	if ($RemoteRegistry.Status -eq [ServiceControllerStatus]::Stopped -and $Configuration.Status -eq [ServiceControllerStatus]::Running) {
+		Write-Host "$($Configuration.$Computer): Starting remote registry"
+		Start-Service -InputObject ($RemoteRegistry) -ErrorAction Stop
+	}
 }
 
 function WMI
@@ -42,8 +57,22 @@ function WMI
 		$Configuration
 	)
 
-	#Stop-Service -InputObject (Get-Service -ComputerName $Configuration.Computer -Name Winmgmt) -ErrorAction Stop
-	Set-Service -ComputerName $Configuration.Computer -Name Winmgmt -StartupType Automatic -ErrorAction Stop
+	$WMI = Get-Service -ComputerName $Configuration.Computer -Name Winmgmt
+
+	Set-Service -ComputerName $Configuration.Computer -Name Winmgmt -StartupType $Configuration.StartType -ErrorAction Stop
+	$StartType = ([ServiceStartupType]$Configuration.StartType).ToString()
+	Write-Host "$($Configuration.Computer): Setting startup type of WMI to $StartType"
+
+	if ($WMI.Status -eq [ServiceControllerStatus]::Running -and $Configuration.Status -eq [ServiceControllerStatus]::Stopped) {
+		Write-Host "$($Configuration.Computer): Stopping WMI"
+		Stop-Service -InputObject ($WMI) -ErrorAction Stop
+		return
+	}
+
+	if ($WMI.Status -eq [ServiceControllerStatus]::Stopped -and $Configuration.Status -eq [ServiceControllerStatus]::Running) {
+		Write-Host "$($Configuration.$Computer): Starting WMI"
+		Start-Service -InputObject ($WMI) -ErrorAction Stop
+	}
 }
 
 function Restore-Setting
@@ -93,4 +122,4 @@ foreach ($Key in $Keys) {
 
 Remove-Item .\config.json
 
-Write-Host "System default has been restored."
+Write-Host "`nSystem default has been restored."
