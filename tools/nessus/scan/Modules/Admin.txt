@@ -1,2 +1,0 @@
-# Check if user is part of the administrator group
-Get-LocalGroupMember -Group 'Administratoren'
