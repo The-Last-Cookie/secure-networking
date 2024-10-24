@@ -4,6 +4,7 @@
 
 . .\Modules\UACModule.ps1
 . .\Modules\RemoteRegistryModule.ps1
+. .\Modules\WmiModule.ps1
 
 function Get-Report
 {
@@ -23,7 +24,11 @@ function Start-Check
 
 	Write-Host ""
 
-	#HandleAdministrativeShares
+	HandleWMI
+
+	Write-Host ""
+
+	#HandlePrinterSharing
 
 	Write-Host "The system has been prepared for the scan."
 }

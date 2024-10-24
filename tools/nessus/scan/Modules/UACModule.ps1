@@ -96,7 +96,7 @@ function Disable-UserAccountControl
 
 	Set-UACLevel -Level 0
 	$UACLevelText = Get-UACStateText (Get-UACLevel)
-    Write-Host "UAC level set to: $UACLevelText"
+	Write-Host "UAC level set to: $UACLevelText"
 
 	Write-BulletPoint -Text "User Account Control (UAC) disabled"
 }

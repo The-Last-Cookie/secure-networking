@@ -14,7 +14,7 @@ The upstream DNS server can either be a public DNS or the router.
 
 Like Fritz!Box, many routers offer a built-in DHCP server. To use this setup, enter the Pi's IP address in the router config under `Heimnetz/Netzwerk/Netzwerkeinstellungen/IP-Adressen/IPv4-Konfiguration/Heimnetz`.
 
-![DHCP settings](tools/img/fritzbox-dhcp.png "Setting in the router")
+![DHCP settings](img/fritzbox-dhcp.png "Setting in the router")
 
 *Caution: Be careful to not create a DNS loop when determining what the upstream server of what DNS server is (router to Pi-hole and vice-versa).*
 

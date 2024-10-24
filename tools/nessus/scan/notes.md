@@ -26,7 +26,7 @@ Get-SmbServerConfiguration | Select AutoShareServer,AutoShareWorkstation
 Set-SmbServerConfiguration -AutoShareServer $True -AutoShareWorkstation $True -Confirm:$false
 
 # Disable
-Set-SmbServerConfiguration -AutoShareServer  $False -AutoShareWorkstation $False -Confirm:$false
+Set-SmbServerConfiguration -AutoShareServer $False -AutoShareWorkstation $False -Confirm:$false
 ```
 
 ### Network logons
