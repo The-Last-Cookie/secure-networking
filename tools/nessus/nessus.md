@@ -29,7 +29,7 @@ In this context, it is best to use static IPs for the host devices that should b
 
 ## Running a credentialed scan
 
-The scan should be done via a dedicated account used for scanning that has appropriate permissions. User accounts and admin accounts of users should not be used.
+The scan should be done via a dedicated account used for scanning that has appropriate permissions (local administrator group). User accounts and admin accounts of users should not be used.
 
 To store passwords for these dedicated accounts, Bitwarden might be useful to have on the server running Tenable.
 
@@ -43,7 +43,12 @@ To store passwords for these dedicated accounts, Bitwarden might be useful to ha
 
 ### Protecting credentials
 
-- https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts
+#### Windows
+
+There are a few best practices [outlined here](https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts) for an AD environment, however, this article only concerns computers that are not part of a domain.
+
+#### Unix
+
 - https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts
 
 ### Common Scan Failure Indicators
@@ -64,6 +69,10 @@ On the contrary, `WMI Available` and `Credentials checks: Yes` are a sign of a s
 To enable a credentialed scan on **Windows**, the host device needs to be configured with certain settings.
 
 The script in this project which applies this configuration automatically should only be used for computers that are not part of any domain.
+
+To run the script, open PowerShell as admin, enter `powershell -ExecutionPolicy RemoteSigned` and run `scan_preparation_win.ps1`.
+
+After the scan has completed successfully, `revert_scan_win.ps1` should be used to revert all changes.
 
 Inspirations for these checks have been taken from [Nessus-Powershell-Oneliners](https://github.com/kAh00t/Nessus-Powershell-Oneliners/blob/main/NessusOneLiners.md) and [Nessus Credentialed Assessment Readiness Check (Windows)](https://github.com/tecnobabble/nessus_win_cred_test).
 
@@ -100,8 +109,10 @@ Disable-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsof
 TODO:
 
 - <https://learn.microsoft.com/en-us/previous-versions/orphan-topics/ws.11/cc731957(v=ws.11)?redirectedfrom=MSDN>
-- https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-locally
-- https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/deny-log-on-through-remote-desktop-services
+
+Links from a Tenable blog page:
+
+- https://techcommunity.microsoft.com/t5/storage-at-microsoft/stop-using-smb1/ba-p/425858
 - https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/microsoft-network-server-digitally-sign-communications-always
 - https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-security
 
