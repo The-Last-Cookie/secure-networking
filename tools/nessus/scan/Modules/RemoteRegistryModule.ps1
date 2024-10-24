@@ -47,6 +47,8 @@ function HandleRemoteRegistry
 	$RemoteRegistryConfig = @{
 		"remote-registry" = @{
 			"Computer" = $Computer
+			"StartType" = $RemoteRegistry.StartType
+			"Status" = $RemoteRegistry.Status
 		}
 	}
 	Save-Setting -Content $RemoteRegistryConfig

@@ -47,6 +47,8 @@ function HandleWMI
 	$WMIConfig = @{
 		"wmi" = @{
 			"Computer" = $Computer
+			"StartType" = $WMI.StartType
+			"Status" = $WMI.Status
 		}
 	}
 	Save-Setting -Content $WMIConfig
