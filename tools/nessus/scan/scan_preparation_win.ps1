@@ -36,6 +36,8 @@ function Start-Check
 
 	HandlePrinterSharing
 
+	Write-Host ""
+
 	Write-Host "The scan script has completed successfully."
 }
 
