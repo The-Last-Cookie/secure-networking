@@ -6,6 +6,7 @@
 . .\Modules\RemoteRegistryModule.ps1
 . .\Modules\WmiModule.ps1
 . .\Modules\RemoteFileShareModule.ps1
+. .\Modules\PrinterSharingModule.ps1
 
 function Get-Report
 {
@@ -33,9 +34,9 @@ function Start-Check
 
 	Write-Host ""
 
-	#HandlePrinterSharing
+	HandlePrinterSharing
 
-	Write-Host "The system has been prepared for the scan."
+	Write-Host "The scan script has completed successfully."
 }
 
 Write-Host "Nessus scan readiness check"

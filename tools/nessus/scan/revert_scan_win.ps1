@@ -75,6 +75,19 @@ function WMI
 	}
 }
 
+function PrinterSharing
+{
+	param
+	(
+		$Configuration
+	)
+
+	#$DisplayGroup "Printer and file sharing"
+	$DisplayGroup = "Datei- und Druckerfreigabe"
+	Set-NetFirewallRule -DisplayGroup $DisplayGroup -Enabled False -Profile Private
+   	Write-BulletPoint -Text "Printer sharing was deactivated."
+}
+
 function Restore-Setting
 {
 	param
@@ -93,6 +106,9 @@ function Restore-Setting
 		}
 		"wmi" {
 			WMI -Configuration $Configuration
+		}
+		"printer-sharing" {
+			PrinterSharing -Configuration $Configuration
 		}
 	}
 }
