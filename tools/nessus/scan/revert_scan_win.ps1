@@ -15,11 +15,11 @@ function UserAccountControl
 	)
 
 	$RegistryItem = "LocalAccountTokenFilterPolicy"
-	if ($Configuration.LocalAccountTokenFilterPolicy -match "NoValueException") {
-		Remove-ItemProperty -Path $SystemPolicies -Name $RegistryItem
+	if ($Configuration.LocalAccountTokenFilterPolicy -eq "0") {
+		Set-RegistryValue -Key $SystemPolicies -Name $RegistryItem -Value $Configuration.LocalAccountTokenFilterPolicy
 	}
 	else {
-		Set-RegistryValue -Key $SystemPolicies -Name $RegistryItem -Value $Configuration.LocalAccountTokenFilterPolicy
+		Remove-ItemProperty -Path $SystemPolicies -Name $RegistryItem
 	}
 
 	Set-UACLevel -Level $Configuration.UACLevel
