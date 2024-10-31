@@ -65,7 +65,7 @@ function EnablePrinterSharing
 	#$DisplayGroup "Printer and file sharing"
 	$DisplayGroup = "Datei- und Druckerfreigabe"
 	Set-NetFirewallRule -DisplayGroup $DisplayGroup -Enabled True -Profile Private
-    Write-BulletPoint -Text "Printer sharing active"
+	Write-BulletPoint -Text "Printer sharing active"
 }
 
 function HandlePrinterSharing
