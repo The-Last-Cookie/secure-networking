@@ -49,7 +49,7 @@ To store passwords for these dedicated accounts, Bitwarden might be useful to ha
 
 There are a few best practices outlined [here](https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts) for an AD environment, however, this article only concerns computers that are not part of a domain.
 
-#### Unix
+#### Linux
 
 - <https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts>
 
@@ -66,7 +66,7 @@ On the contrary, `WMI Available` and `Credentials checks: Yes` are a sign of a s
 
 ## Readiness check
 
-### Windows
+### Scanning Windows
 
 To enable a credentialed scan on **Windows**, the host device needs to be configured with certain settings.[^windows-settings][^admin-account]
 
@@ -87,6 +87,8 @@ The following section details the required settings for a successful scan.
 Disable User Account Control (UAC) by setting it to `Never Notify`.[^uac]
 
 Furthermore, add the registry key `LocalAccountTokenFilterPolicy` in `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System` and set its value to 1.
+
+In Windows 7 and 8, if you disable UAC, then you must set `EnableLUA` to 0 as well.
 
 #### Remote registry
 
@@ -133,7 +135,7 @@ Set-SmbServerConfiguration -AutoShareServer $True -AutoShareWorkstation $True -C
 Set-SmbServerConfiguration -AutoShareServer $False -AutoShareWorkstation $False -Confirm:$false
 ```
 
-### Linux
+### Scanning Linux
 
 **Linux** does support credentialed scans via SSH key authentication.
 
