@@ -1,5 +1,12 @@
 # Server Message Block (SMB)
 
+## Todo
+
+- [How (and why) to disable 'File and Printer Sharing' on your Windows PC](https://www.youtube.com/watch?v=Gqdd6w2cue8)
+  - If a service is not used, it should be deactivated.<!--What does this feature entail (printing, transmitting files between computers) ?-->
+
+<!--disabling the Lanman services does not impact the ability to use the local printer (if it supports TCP/IP that is) and it also increases security > only deactivate if file and printer sharing is not used-->
+
 SMB is a protocol for client-server communication for sharing files, printers and other network ressources. It can also be used for inter-process communication (IPC). Originally, it was developed for Windows, but more and more operation systems are adapting to it. Linux for example uses Samba.
 
 Any computer supporting file sharing has both a SMB *server* for providing access to its files and a SMB *client* for accessing a remote computers' files. In Windows, the services `LanmanServer` and `LanmanWorkstation` respectively are responsible for that task which are running on the ports 445 and 139.[^lanman]
@@ -17,8 +24,6 @@ Overview over the default shares and their purpose:
 | FAX$ | For shared fax server access |
 
 Registry settings for the two services are available under `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services` > `LanmanServer` and `LanmanWorkstation` respectively.
-
-<!--disabling the Lanman services does not impact the ability to use the local printer (if it supports TCP/IP that is) and it also increases security > only deactivate if file and printer sharing is not used-->
 
 ## Security considerations
 
@@ -132,11 +137,6 @@ Printers can also be hooked up to a network device like a laptop which then shar
 
 - File and printer sharing must be enabled
 - Print requests are first send to the management device and then transformed into the required format for the printer
-
-## Todo
-
-- [How (and why) to disable 'File and Printer Sharing' on your Windows PC](https://www.youtube.com/watch?v=Gqdd6w2cue8)
-  - If a service is not used, it should be deactivated.<!--What does this feature entail (printing, transmitting files between computers) ?-->
 
 ## Sources
 
