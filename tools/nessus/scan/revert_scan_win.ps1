@@ -23,6 +23,8 @@ function UserAccountControl
 	}
 
 	Set-UACLevel -Level $Configuration.UACLevel
+	$UACText = Get-UACStateText $Configuration.UACLevel
+	Write-Host "User Account Control (UAC) set to $UACText"
 }
 
 function RemoteRegistry
@@ -134,8 +136,9 @@ $Keys = $Settings.Keys
 foreach ($Key in $Keys) {
 	$Setting = $Settings.$Key
 	Restore-Setting -Key $Key -Configuration $Setting
+	Write-Host ""
 }
 
 Remove-Item .\config.json
 
-Write-Host "`nSystem default has been restored."
+Write-Host "System default has been restored."
