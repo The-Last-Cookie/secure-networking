@@ -5,6 +5,7 @@
 . .\Modules\UACModule.ps1
 . .\Modules\RemoteRegistryModule.ps1
 . .\Modules\WmiModule.ps1
+. .\Modules\RemoteFileShareModule.ps1
 
 function Get-Report
 {
@@ -25,6 +26,10 @@ function Start-Check
 	Write-Host ""
 
 	HandleWMI
+
+	Write-Host ""
+
+	HandleRemoteFileShares
 
 	Write-Host ""
 
