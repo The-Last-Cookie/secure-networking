@@ -80,6 +80,8 @@ Inspirations for these checks have been taken from [Nessus-Powershell-Oneliners]
 
 The following section details the required settings for a successful scan.
 
+*Notice: Some checks require language-specific queries.*
+
 #### User account control (UAC)
 
 Disable User Account Control (UAC) by setting it to `Never Notify`.[^uac]
@@ -96,14 +98,39 @@ Like the remote registry, WMI must be active while scanning.
 
 #### File and printer sharing
 
-File and printer sharing needs to be activated for the scan.
-
-*TODO: Commands need further testing before they can confidently be added as a standard routine in the script.*
+File and printer sharing needs to be activated for the scan.[^printer-sharing]
 
 ```ps
-Get-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
-Enable-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
-Disable-NetAdapterBinding -DisplayName "Datei- und Druckerfreigabe für Microsoft-Netzwerke"
+Set-NetFirewallRule -DisplayGroup "File and printer sharing" -Enabled True -Profile Private
+```
+
+Setting file and printer sharing does **not** have any effect on the following settings:
+
+```ps
+Get-SmbShare
+Get-Service LanMan*
+Get-NetAdapterBinding -DisplayName "File and printer sharing for Microsoft networks"
+
+# See admin remote file shares
+Get-SmbServerConfiguration | Select AutoShareServer,AutoShareWorkstation
+```
+
+#### Enable admin remote file shares (client and server)
+
+*Notice: Restart required for changes to take effect.*
+
+Nessus needs access to remote file shares like C$ and ADMIN$. By default, these are activated and should stay enabled.
+
+Set AutoShareServer and AutoShareWks in `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters` to 1 or remove them.
+
+```ps
+Get-SmbServerConfiguration | Select-Object AutoShareServer,AutoShareWorkstation
+
+# Enable
+Set-SmbServerConfiguration -AutoShareServer $True -AutoShareWorkstation $True -Confirm:$false
+
+# Disable
+Set-SmbServerConfiguration -AutoShareServer $False -AutoShareWorkstation $False -Confirm:$false
 ```
 
 ### Linux
@@ -150,3 +177,4 @@ sudo systemctl start nessusd.service
 [^admin-account]: See [Scanning with non-default Windows Administrator Account](https://community.tenable.com/s/article/Scanning-with-non-default-Windows-Administrator-Account?language=en_US).
 [^uac]: In German, the dialogue is called "Einstellungen der Benutzerkontensteuerung ändern" and needs to be set from `Standard` to `Nie benachrichtigen`.
 [^remote-registry]: In German, `Remoteregistrierung` must be set from `Deaktiviert` to `Automatisch`.
+[^printer-sharing]: In German, `File and printer sharing` is called `Datei- und Druckerfreigabe`.
