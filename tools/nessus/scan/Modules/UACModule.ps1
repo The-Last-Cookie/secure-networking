@@ -94,7 +94,7 @@ function Disable-UserAccountControl
 	Set-RegistryValue -Key $SystemPolicies -Name "LocalAccountTokenFilterPolicy" -Value 1
 	Write-Host "LocalAccountTokenFilterPolicy set to 1"
 
-	# TODO: For Windows 7 and 8, "EnableLua" in  must be set to 0
+	# TODO: For Windows 7 and 8, "EnableLua" in the same registry location must be set to 0
 
 	Set-UACLevel -Level 0
 	$UACLevelText = Get-UACStateText (Get-UACLevel)
