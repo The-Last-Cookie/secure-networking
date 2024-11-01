@@ -1,15 +1,10 @@
 # Server Message Block (SMB)
 
-## Todo
-
-- [How (and why) to disable 'File and Printer Sharing' on your Windows PC](https://www.youtube.com/watch?v=Gqdd6w2cue8)
-  - If a service is not used, it should be deactivated.<!--What does this feature entail (printing, transmitting files between computers) ?-->
-
-<!--disabling the Lanman services does not impact the ability to use the local printer (if it supports TCP/IP that is) and it also increases security > only deactivate if file and printer sharing is not used-->
-
 SMB is a protocol for client-server communication for sharing files, printers and other network ressources. It can also be used for inter-process communication (IPC). Originally, it was developed for Windows, but more and more operation systems are adapting to it. Linux for example uses Samba.
 
 Any computer supporting file sharing has both a SMB *server* for providing access to its files and a SMB *client* for accessing a remote computers' files. In Windows, the services `LanmanServer` and `LanmanWorkstation` respectively are responsible for that task which are running on the ports 445 and 139.[^lanman]
+
+<!--disabling the Lanman services does not impact the ability to use the local printer (if it supports TCP/IP that is) and it also increases security > only deactivate if file and printer sharing is not used-->
 
 There are a handful of default file shares like ADMIN$, C$ and IPC$ meant for administrative purposes.[^dollar] They **should not be deactivated** because complications may arise when accessing network shares.[^deactivate-default-share] Instead, they should be protected with proper firewall rules (local client). `Get-SmbShare` creates a listing of all SMB shares.
 
