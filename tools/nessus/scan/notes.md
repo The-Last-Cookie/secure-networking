@@ -39,30 +39,11 @@ Set ForceGuest in `HKEY_LOCAL_MACHINE\System\Currentcontrolset\Control\Lsa` to 0
 
 This policy setting determines how network logons that use local accounts are authenticated. The Classic option allows precise control over access to resources, including the ability to assign different types of access to different users for the same resource. This must be set to Classic for Nessus to have appropriate permissions to authenticate.
 
-### WMI
-
-Check if WMI is enabled and activated
-
-```ps
-Set-Service -Name Winmgmt -StartupType Automatic
-Start-Service -Name Winmgmt
-```
-
 ### Local administrator
 
 Ensure the proper user/group is in the local Administrator group. For the scan, the nessus user must be part of the local admin group.
 
 ```ps
-$MachineName = [Environment]::MachineName
-$Filter = "Name = 'Administratoren'"
-$WMI = Get-WMIObject Win32_Group -Filter $Filter
-$WMI.GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
-$WMI.GetRelated("Win32_Group") | Where-Object {$_.Domain -eq $MachineName} | Select -exp Name
-$WMI.GetRelated("Win32_UserAccount") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
-$WMI.GetRelated("Win32_Group") | Where-Object {$_.Domain -ne $MachineName} | Select -exp Caption
-
-# or
-
 Get-LocalGroupMember -Group 'Administratoren'
 ```
 
@@ -91,36 +72,6 @@ catch {
 if ((( $SPN_Validation -eq 1) -or ($SPN_Validation -eq 2)) -and ($OS_Name -match "Windows 10") -and ($OS_Release -ge 1709)) {"1"}
 else {"0"}
 ```
-
-### Firewall
-
-Firewall needs to be disabled (wf.msc)
-
-<!--Only needed for communication with VM?-->
-
-```ps
-Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
-
-# or
-
-netsh firewall set opmode enable
-netsh firewall set opmode disable
-
-# or
-
-netsh advfirewall firewall add rule dir=in name ="Nessus_Allow_WMI-in_Private" program=%systemroot%\system32\svchost.exe service=winmgmt action=allow protocol=TCP localport=any profile=private
-netsh advfirewall firewall add rule dir=in action=allow protocol=TCP localport=135 name="Nessus_Allow_TCP_135_private_DCOM_In" profile=private
-netsh advfirewall firewall add rule dir=in action=allow protocol=TCP localport=139 name="Nessus_Allow_TCP_139_private_NB_Session_In" profile=private
-netsh advfirewall firewall add rule dir=in action=allow protocol=TCP localport=445 name="Nessus_Allow_TCP_445_private_SMB_In" profile=private
-
-# remove rules:
-netsh advfirewall firewall delete rule name="Nessus_Allow_WMI-in_Private" profile=private
-netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_135_private_DCOM_In" profile=private
-netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_139_private_NB_Session_In" profile=private
-netsh advfirewall firewall delete rule name="Nessus_Allow_TCP_445_private_SMB_In" profile=private
-```
-
-See also the preliminary script.
 
 ## Annotations
 

@@ -15,14 +15,16 @@ function UserAccountControl
 	)
 
 	$RegistryItem = "LocalAccountTokenFilterPolicy"
-	if ($Configuration.LocalAccountTokenFilterPolicy -match "NoValueException") {
-		Remove-ItemProperty -Path $SystemPolicies -Name $RegistryItem
+	if ($Configuration.LocalAccountTokenFilterPolicy -eq "0") {
+		Set-RegistryValue -Key $SystemPolicies -Name $RegistryItem -Value $Configuration.LocalAccountTokenFilterPolicy
 	}
 	else {
-		Set-RegistryValue -Key $SystemPolicies -Name $RegistryItem -Value $Configuration.LocalAccountTokenFilterPolicy
+		Remove-ItemProperty -Path $SystemPolicies -Name $RegistryItem
 	}
 
 	Set-UACLevel -Level $Configuration.UACLevel
+	$UACText = Get-UACStateText $Configuration.UACLevel
+	Write-Host "User Account Control (UAC) set to $UACText"
 }
 
 function RemoteRegistry
@@ -75,6 +77,19 @@ function WMI
 	}
 }
 
+function PrinterSharing
+{
+	param
+	(
+		$Configuration
+	)
+
+	#$DisplayGroup "Printer and file sharing"
+	$DisplayGroup = "Datei- und Druckerfreigabe"
+	Set-NetFirewallRule -DisplayGroup $DisplayGroup -Enabled False -Profile Private
+   	Write-BulletPoint -Text "Printer sharing was deactivated."
+}
+
 function Restore-Setting
 {
 	param
@@ -93,6 +108,9 @@ function Restore-Setting
 		}
 		"wmi" {
 			WMI -Configuration $Configuration
+		}
+		"printer-sharing" {
+			PrinterSharing -Configuration $Configuration
 		}
 	}
 }
@@ -118,8 +136,9 @@ $Keys = $Settings.Keys
 foreach ($Key in $Keys) {
 	$Setting = $Settings.$Key
 	Restore-Setting -Key $Key -Configuration $Setting
+	Write-Host ""
 }
 
 Remove-Item .\config.json
 
-Write-Host "`nSystem default has been restored."
+Write-Host "System default has been restored."
