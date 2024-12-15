@@ -49,9 +49,18 @@ To store passwords for these dedicated accounts, Bitwarden might be useful to ha
 
 There are a few best practices outlined [here](https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts) for an AD environment, however, this article only concerns computers that are not part of a domain.
 
+For authentication methods on Windows suitable for Nessus, see [Scans > Scan Templates > Credentials > Host Credentials > Windows](https://docs.tenable.com/nessus/Content/Windows.htm).
+
 #### Linux
 
-- <https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts>
+General tips for protecting credentials are outlined [here](https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts):
+
+1. **Securely configure SSH:** Tips for SSH can be read [here](./../../ssh.md).
+2. **Least privilege functionality:** Allow access to what is needed ([Configuring Least Privilege SSH scans with Nessus](https://www.tenable.com/blog/configuring-least-privilege-ssh-scans-with-nessus) may be of help).
+3. **Unique accounts for authentication and assessments:** Consider setting [this in Nessus](https://docs.tenable.com/nessus/Content/SSH.htm).
+4. **SSH key encryption:** If using a SSH key, a passphrase should be added so that the key file is encrypted.
+
+For authenticating on Linux, see [Scans > Scan Templates > Credentials > Host Credentials > SSH](https://docs.tenable.com/nessus/Content/SSH.htm).
 
 ### Common Scan Failure Indicators
 
@@ -137,9 +146,40 @@ Set-SmbServerConfiguration -AutoShareServer $False -AutoShareWorkstation $False 
 
 ### Scanning Linux
 
-**Linux** does support credentialed scans via SSH key authentication.
+**Linux** does support credentialed scans via SSH key authentication.[^linux-scan] The account used for scanning must have root privileges.
 
-- <https://docs.tenable.com/nessus/Content/CredentialedChecksOnLinux.htm>
+*Notice: If the shell variable PS1 is shorter than 4 letters, the scan time may drastically increase.*[^ps1]
+
+#### Generate SSH public and private key pair
+
+It does not matter where and how the key pair is created. However, it is important that the defined Tenable Nessus user owns the keys.
+
+Create a key pair with `ssh-keygen -t ed25519`. It is recommended to set **nessus** as the filename. Then, choose a passphrase (or choose an empty password by pressing `Return` twice). If you specify a passphrase, you must specify it in **Policies** > **Credentials** > **SSH settings** for Tenable Nessus to use key-based authentication.
+
+Upon creating a user account which Nessus uses to login on the remote system, make sure that the account has no valid password set. On Linux systems, new user accounts are locked by default, unless you explicitly set an initial password. If you are using an account where someone had set a password, use the `passwd –l <username>` command to lock the account.
+
+<!-- lock users when not needed like in Windows? -->
+
+The private key will **stay on the server running Nessus**. The public key will be distributed to all clients that are scanned.
+
+You must create the directory under the new account’s home directory to hold the public key. By default, the key file is copied under `/home/<username>/.ssh` and added to the `authorized_keys` file.
+
+```sh
+chown -R <username>:<username> /home/<username>/.ssh/
+chmod 700 /home/<username>/.ssh
+chmod 600 /home/<username>/.ssh/authorized_keys
+```
+
+Tenable Nessus encrypts all passwords stored in policies. However, Tenable recommends using SSH keys for authentication rather than SSH passwords. This helps ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control.
+
+#### Global Credential Settings
+
+| Option | Default Value | Description |
+| :-: | :-: | :-- |
+| **known_hosts file** | none | If an SSH **known_hosts file** is available and provided as part of the Global Credential Settings of the scan policy in the **known_hosts file** field, Tenable Nessus attempts to log into hosts in this file. This can ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control. |
+| **Preferred port** | 22 | You can set this option to direct Tenable Nessus to connect to SSH if it is running on a port other than 22. |
+| **Client version** | OpenSSH_5.0 | Specifies which type of SSH client Tenable Nessus impersonates while scanning. |
+| **Attempt least privilege** | Cleared | Enables or disables dynamic privilege escalation. When enabled, Tenable Nessus attempts to run the scan with an account with lesser privileges, even if you enable the Elevate privileges with option. If a command fails, Tenable Nessus escalates privileges. Plugins 102095 and 102094 report which plugins ran with or without escalated privileges.<br><br>*Note: Enabling this option may increase scan run time by up to 30%.* |
 
 ## Managing Nessus
 
@@ -180,3 +220,5 @@ sudo systemctl start nessusd.service
 [^uac]: In German, the dialogue is called "Einstellungen der Benutzerkontensteuerung ändern" and needs to be set from `Standard` to `Nie benachrichtigen`.
 [^remote-registry]: In German, `Remoteregistrierung` must be set from `Deaktiviert` to `Automatisch`.
 [^printer-sharing]: In German, `File and printer sharing` is called `Datei- und Druckerfreigabe`.
+[^linux-scan]: See [Credentialed Checks on Linux](https://docs.tenable.com/nessus/Content/CredentialedChecksOnLinux.htm) and [SSH](https://docs.tenable.com/nessus/Content/SSH.htm).
+[^ps1]: The shell variable PS1 (not to be confused with environment variable) defines the prompt text in the console displayed to the left, before typing in a command. It's default value is described in `.bashrc` with `PS1='\u@\h:~\$ '`. For more information, see [Prompt](https://wiki.ubuntuusers.de/Bash/Prompt/).
