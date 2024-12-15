@@ -22,6 +22,14 @@ function UserAccountControl
 		Remove-ItemProperty -Path $SystemPolicies -Name $RegistryItem
 	}
 
+	$OS_Name = (gcim Win32_OperatingSystem).Caption
+	$OS_Release = Get-RegistryValue -Key $CurrentVersion -Name "ReleaseID"
+
+	if ($OS_Release -match "^6\.1\." -or $OS_Release -match "^6\.[23]\.") {
+		Set-RegistryValue -Key $SystemPolicies -Name "EnableLua" -Value $Configuration.EnableLua
+		Write-BulletPoint -Text "EnableLua set to $Configuration.EnableLua"
+	}
+
 	Set-UACLevel -Level $Configuration.UACLevel
 	$UACText = Get-UACStateText $Configuration.UACLevel
 	Write-Host "User Account Control (UAC) set to $UACText"
