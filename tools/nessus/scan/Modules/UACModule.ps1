@@ -2,6 +2,7 @@
 . .\Utils\RegistryUtils.ps1
 . .\Utils\FileUtils.ps1
 
+$CurrentVersion = "Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion"
 $SystemPolicies = "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 $ConsentPromptBehaviorAdmin_Name = "ConsentPromptBehaviorAdmin"
 $PromptOnSecureDesktop_Name = "PromptOnSecureDesktop"
@@ -94,7 +95,15 @@ function Disable-UserAccountControl
 	Set-RegistryValue -Key $SystemPolicies -Name "LocalAccountTokenFilterPolicy" -Value 1
 	Write-Host "LocalAccountTokenFilterPolicy set to 1"
 
-	# TODO: For Windows 7 and 8, "EnableLua" in the same registry location must be set to 0
+	# For Windows 7 and 8, "EnableLua" must be set to 0
+	$OS_Name = (gcim Win32_OperatingSystem).Caption
+	$OS_Release = Get-RegistryValue -Key $CurrentVersion -Name "ReleaseID"
+
+	if ($OS_Release -match "^6\.1\." -or $OS_Release -match "^6\.[23]\.") {
+		Write-Host "Detected $OS_Name (Version: $OS_Release)"
+		Set-RegistryValue -Key $SystemPolicies -Name "EnableLua" -Value 0
+		Write-BulletPoint -Text "EnableLua set to 0"
+	}
 
 	Set-UACLevel -Level 0
 	$UACLevelText = Get-UACStateText (Get-UACLevel)
@@ -110,14 +119,19 @@ function HandleUserAccountControl
 	)
 
 	$LocalAccountTokenFilterPolicy = Get-RegistryValue -Key $SystemPolicies -Name "LocalAccountTokenFilterPolicy"
+	$EnableLua = Get-RegistryValue -Key $SystemPolicies -Name "EnableLua"
 
 	if (($LocalAccountTokenFilterPolicy -eq 1) -and ((Get-UACLevel) -eq [UACState]::NeverNotify)) {
-		Write-BulletPoint -Text "UAC configuration is correct."
-		return
+		if ($EnableLua -eq 1) {
+			# todo: handle enablelua for windows 8 and 10
+			Write-BulletPoint -Text "UAC configuration is correct."
+			return
+		}
 	}
 
 	$UACConfiguration = @{
 		"uac" = @{
+			"EnableLua" = $EnableLua
 			"LocalAccountTokenFilterPolicy" = $LocalAccountTokenFilterPolicy
 			"UACLevel" = Get-UACLevel
 		}
