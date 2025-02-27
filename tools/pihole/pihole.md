@@ -6,22 +6,32 @@ Tutorials:
   - [Anleitungen](https://github.com/RPiList/specials/tree/master/Anleitungen)
   - [Benötigte Hardware](https://github.com/RPiList/specials/blob/master/Ben%C3%B6tigte%20Hardware.md)
 - [DAS halbiert eure Ladezeiten | Pi-Hole-Tutorial](https://youtu.be/FjNkv2aPiiA)
+- [Pi-hole: Einrichtung und Konfiguration mit Fritz!Box](https://www.kuketz-blog.de/pi-hole-einrichtung-und-konfiguration-mit-fritzbox-adblocker-teil1/)
 
 ## Installation
 
 Write the Raspberry Pi image to a SD card with the Raspberry Pi imager.
 
-Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (32 bit)` is chosen.
+Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (64 bit)` is chosen.
 
-<!--There's now also a 64 bit image available?-->
+To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and password combination or a public key.
 
-To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and passwort combination or a public key.
+After the installation is finished, let the device connect to the network and find out its IP address.
 
-After the installation has finished, let the device connect to the network and find out its IP address.
-
-In the router settings, it is recommended to set the Raspberry Pi's IP address to a static value (this is needed to more easily configure the Raspberry PI as the DNS).
+In the router settings, it is recommended to set the Raspberry Pi's IP address to a static value (this is needed to more easily configure the Raspberry Pi as the DNS).
 
 Connect to the Raspberry Pi via `ssh <IP address> -l pi`.
+
+Update all system packages:
+
+```sh
+sudo apt-get update 
+sudo apt-get upgrade 
+sudo apt-get dist-upgrade 
+sudo apt-get autoremove
+
+sudo reboot
+```
 
 Then, install pihole with `curl -sSL https://install.pi-hole.net | bash`.
 
@@ -31,17 +41,11 @@ Now add the Raspberry Pi's IP address as a DNS to your router's settings.[^route
 
 The web interface is now accessible via `http://<IP address>/admin`. The standard port of the web interface is 80.
 
-### Pihole v6
-
-The next major version uses a different webserver. Thus all PHP components and the old webserver should be removed upon migration.
-
-```sh
-apt remove php lighttpd
-```
-
 ## Serving the pihole service over SSL
 
-When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole, it's `lighttpd`.
+<!--TODO: Move to ssl.md?-->
+
+When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole v5, it's `lighttpd`.
 
 **Step 1:** Use OpenSSL to create the pem file.
 
@@ -51,7 +55,7 @@ openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -noenc
 
 This pem file now contains a key and a certificate (.crt) file.
 
-Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. The location doesn’t really matter here as long as access is given to the files needed (*sudo chown www-data [pem file]*). "SSL" or "TLS" as the folder name is the most common setup.
+Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. The location doesn't really matter here as long as access is given to the files needed (*sudo chown www-data [pem file]*). "SSL" or "TLS" as the folder name is the most common setup.
 
 **Step 2:** Add the SSL config in the `/etc/lighttpd/conf-available/10-ssl.conf` file, where "10" notes down the order in which the config files are loaded in (which number is used is not important here).
 
