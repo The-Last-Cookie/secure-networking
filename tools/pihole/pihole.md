@@ -156,48 +156,15 @@ pihole has the ability to define domains to link to devices in the local network
 
 There is also unbound, enabling recursive dns lookup.
 
-- [Pihole lan dns](https://nerdig.es/pi-hole-lan-dns/)
-  - [Script](https://nerdig.es/raspi-eth0-watchdog/) that checks if the ethernet connection is still up (to the dns server)
 - [Using unbound as a local recursive dns](https://docs.pi-hole.net/guides/dns/unbound/) (especially round robin lookup)
 - [Pi-hole: Einrichtung und Konfiguration mit unbound](https://www.kuketz-blog.de/pi-hole-einrichtung-und-konfiguration-mit-unbound-adblocker-teil2/)
 
 ## General maintenance
 
-Common commands:
-
-| Command | Description |
-| :-: | :-- |
-| sudo systemctl reboot | Reboot the system |
-| sudo shutdown --poweroff | Shutdown the system (*systemctl poweroff* does the same but does not provide any scheduling ability) |
-| lscpu | Display CPU information |
-| lsblk | Display disk information |
-| free -m | Show RAM information |
-
-Commands related to pihole:
-
 | Command | Description |
 | :-: | :-- |
 | pihole -up | Update pihole |
 | pihole -a -p | Set password for the web interface |
-
-### Disable unneeded interfaces
-
-To minise used energy, the boot config can be configured in `/boot/firmware/config.txt`, so that unnecessary interfaces are deactivated.[^pihole-boot] Some are listed below:
-
-```sh
-# Disable analog audio 
-dtparam=audio=off
-
-# Disable audio via HDMI 
-dtoverlay=vc4-kms-v3d,noaudio 
-
-# Disable Bluetooth, WiFi and HDMI 
-dtoverlay=disable-bt  
-dtoverlay=disable-wifi 
-hdmi_blanking=1
-```
-
-(The system needs to be rebooted after changes have been applied to this file.)
 
 ### Reduce memory access
 
@@ -210,17 +177,7 @@ DBINTERVAL=30
 MAXDBDAYS=14
 ```
 
-### (Temporary) apt key file problem
-
-`apt-key` is deprecated and only meant to delete old keys. Every repository managed by apt now receives its own key.
-
-Thus, they are moved from `/etc/apt/trusted.gpg` to `/etc/apt/trusted.d/key1.gpg`, `/etc/apt/trusted.d/key2.gpg` and so on.
-
-*For newly installed Raspberry Pis*, it is enough to move the key file to the correct location via `mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/bookworm_InRelease.gpg`. The name of the `.gpg` file does not matter here, it is solely important that the file is at its right place.[^apt-key]
-
 ## Annotations
 
 [^router-settings]: An example setting for the Fritz!Box router has been added [here](/../router.md).
 [^ping]: This can also be identified by using `ping`. If the IP is wrong, the command will say `Temporary failure in name resolution`.
-[^pihole-boot]: The full documentation regarding this file is available [here](https://www.raspberrypi.com/documentation/computers/config_txt.html).
-[^apt-key]: [Warnung apt keyring beim Update beheben](https://forum-raspberrypi.de/forum/thread/60014-warnung-apt-keyring-beim-update-beheben/)
