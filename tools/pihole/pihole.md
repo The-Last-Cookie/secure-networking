@@ -10,7 +10,7 @@ Tutorials:
 
 ## Installation
 
-Pihole can be installed with `curl -sSL https://install.pi-hole.net | bash`.
+Pihole can be installed with `sudo curl -sSL https://install.pi-hole.net | bash`.
 
 While installing, note down the web interface password that is shown in the terminal to later access the web interface for the first time.
 
@@ -145,17 +145,19 @@ There is also unbound, enabling recursive dns lookup.
 | Command | Description |
 | :-: | :-- |
 | pihole -up | Update pihole |
-| pihole -a -p | Set password for the web interface |
+| pihole setpassword | Set password for the web interface |
 
 ### Reduce memory access
 
-To minimise load on the SD card, pihole can be configured to not save as often to disk. In `/etc/pihole/pihole-FTL.conf`, type in the following settings:
+To minimise load on the SD card, pihole can be configured to not save as often to disk. In `/etc/pihole/pihole.toml`, type in the following settings:
 
 ```sh
-#; How often are queries stored in FTL's database [minutes] | Default: 1.0
-DBINTERVAL=30
-#; IP addresses older than the specified number of days are removed from database | Default: 365
-MAXDBDAYS=14
+# How long should queries be stored in the database [days]? | Default: 91
+maxDBdays = 14
+# How often do we store queries in FTL's database [seconds]? | Default: 60
+DBinterval = 300
+# How long should IP addresses be kept in the network_addresses table [days]? | Default: 91
+expire = 14
 ```
 
 ## Annotations
