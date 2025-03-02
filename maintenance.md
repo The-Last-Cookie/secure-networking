@@ -16,6 +16,14 @@ In the router settings, it is recommended to set the Raspberry Pi's IP address t
 
 Connect to the Raspberry Pi via `ssh <IP address> -l pi`.
 
+Adjust the time zone (Europe/Berlin) with `raspi-config`:
+
+```sh
+sudo raspi-config
+Localisation Options -> Timezone -> Europe -> Berlin
+Finish
+```
+
 Update all system packages:
 
 ```sh
