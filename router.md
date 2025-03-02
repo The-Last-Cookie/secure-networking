@@ -20,8 +20,31 @@ Like Fritz!Box, many routers offer a built-in DHCP server. To use this setup, en
 
 Now, add public DNS servers to the router's settings under `Internet/Zugangsdaten/DNS-Server`.
 
-In Pi-hole, only the Fritz!Box should be added as an upstream server. Check `Use Conditional Forwarding` and type in the following values:
+## Using DNS over TLS (DoT)
 
+DNS requests from the local network should be encrypted via TLS before being sent to an upstream DNS server. This can be configured in the router under `Internet/Zugangsart/DNS-Server`. Here are some as an example:
+
+DNSv4-Server:
+
+- Andere DNSv4-Server verwenden: Check
+  - Bevorzugter DNSv4-Server: 94.140.14.140
+  - Alternativer DNSv4-Server: 176.9.93.198
+
+DNS over TLS (DoT):
+
+- Verschlüsselte Namensauflösung im Internet (DNS over TLS): Check
+  - Zertifikatsprüfung für verschlüsselte Namensauflösung im Internet erzwingen: Check
+
+Auflösungsnamen der DNS-Server
+
+- unfiltered.adguard-dns.com
+- dnsforge.de
+
+## Conditional forwarding
+
+In Pi-hole, only the Fritz!Box should be added as an upstream server. Uncheck every other upstream server in the web interface. Under `Use Conditional Forwarding` type in the following values, separated with commas:
+
+- Enabled as a boolean value
 - Local network in CIDR notation: 192.168.50.0/24 (adjust to the network)
 - IP address of your DHCP server (router): 192.168.50.1 (IPv4 address of the Fritz!Box)
 - Local domain name (optional): fritz.box
