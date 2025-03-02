@@ -2,7 +2,32 @@
 
 ## Raspberry Pi
 
-Common commands:
+### Installation
+
+Write the Raspberry Pi image to a SD card with the Raspberry Pi imager.
+
+Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (64 bit)` is chosen.
+
+To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and password combination or a public key.
+
+After the installation is finished, let the device connect to the network and find out its IP address.
+
+In the router settings, it is recommended to set the Raspberry Pi's IP address to a static value (this is needed to more easily configure the Raspberry Pi as the DNS).
+
+Connect to the Raspberry Pi via `ssh <IP address> -l pi`.
+
+Update all system packages:
+
+```sh
+sudo apt-get update 
+sudo apt-get upgrade 
+sudo apt-get dist-upgrade 
+sudo apt-get autoremove
+
+sudo reboot
+```
+
+### Common commands
 
 | Command | Description |
 | :-: | :-- |
