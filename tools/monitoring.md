@@ -1,5 +1,21 @@
 # Monitoring system performance
 
+## Terminology
+
+Begriffsunterscheidung Observability vs. Monitoring. Ersteres beschreibt die Fähigkeit, etwas zu überwachen oder Metriken auszulesen.
+Monitoring meint die eigentliche Ausführung der Arbeit, die hinter der Erfassung von Metriken steckt.
+
+Observability:
+
+- Tracing: Aufzeichnung der Kommunikation von Systemen untereinander (also welchen Weg nimmt ein Request; werden durch einen Request weitere Requests angestoßen?)
+- Profiling: z. B. RAM und CPU-Auslastung
+- Metriken: z. B. Nutzer im Shop
+- Logs: Logdateien mit chronologisch sortierten Einträgen
+
+Tracing und Profiling meist teuer in der Erfassung (Erfassung ist im Vergleich sehr leistungsintensiv)
+
+## Infrastructure
+
 The TIG stack allows for efficient performance monitoring also for smaller devices like the Raspberry Pi.
 
 [Telegraf](https://github.com/influxdata/telegraf) collects system information and data and sends it to an instance of [InfluxDB](https://github.com/influxdata/influxdb) where the information is stored. After that, it is accessed via queries and displayed in [Grafana](https://github.com/grafana/grafana).
