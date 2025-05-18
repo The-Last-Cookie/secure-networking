@@ -156,11 +156,11 @@ It does not matter where and how the key pair is created. However, it is importa
 
 Create a key pair with `ssh-keygen -t ed25519`. It is recommended to set **nessus** as the filename. Then, choose a passphrase (or choose an empty password by pressing `Return` twice). If you specify a passphrase, you must specify it in **Policies** > **Credentials** > **SSH settings** for Tenable Nessus to use key-based authentication.
 
-Upon creating a user account which Nessus uses to login on the remote system, make sure that the account has no valid password set. On Linux systems, new user accounts are locked by default, unless you explicitly set an initial password. If you are using an account where someone had set a password, use the `passwd –l <username>` command to lock the account.
-
-<!-- lock users when not needed like in Windows? -->
-
 The private key will **stay on the server running Nessus**. The public key will be distributed to all clients that are scanned.
+
+To add a user for Nessus to login with, use the `adduser <username>` command. A prompt asking for the password and some optional information will appear. It does not matter what is entered in the prompt, instead lock the user account with `passwd –l <username>`. Now, the account has no valid password set and only login via SSH is enabled.
+
+Then, add the user to the `sudo` group with `usermod -aG sudo <username>`. Commands issued with sudo by this user will now run with root privileges.[^sudo-user]
 
 You must create the directory under the new account’s home directory to hold the public key. By default, the key file is copied under `/home/<username>/.ssh` and added to the `authorized_keys` file.
 
@@ -170,7 +170,9 @@ chmod 700 /home/<username>/.ssh
 chmod 600 /home/<username>/.ssh/authorized_keys
 ```
 
-Tenable Nessus encrypts all passwords stored in policies. However, Tenable recommends using SSH keys for authentication rather than SSH passwords. This helps ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control.
+Tenable Nessus encrypts all passwords stored in policies. However, Tenable recommends using SSH keys for authentication rather than SSH passwords. This helps ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a login into a system that may not be under your control.
+
+When no scan is running, the user account can be disabled to forbid any login (even SSH) by `sudo usermod --expiredate 1 <username>`. Reenable the account with `sudo usermod --expiredate "" <username>`.[^disable-account-linux]
 
 #### Global Credential Settings
 
@@ -179,7 +181,7 @@ Tenable Nessus encrypts all passwords stored in policies. However, Tenable recom
 | **known_hosts file** | none | If an SSH **known_hosts file** is available and provided as part of the Global Credential Settings of the scan policy in the **known_hosts file** field, Tenable Nessus attempts to log into hosts in this file. This can ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control. |
 | **Preferred port** | 22 | You can set this option to direct Tenable Nessus to connect to SSH if it is running on a port other than 22. |
 | **Client version** | OpenSSH_5.0 | Specifies which type of SSH client Tenable Nessus impersonates while scanning. |
-| **Attempt least privilege** | Cleared | Enables or disables dynamic privilege escalation. When enabled, Tenable Nessus attempts to run the scan with an account with lesser privileges, even if you enable the Elevate privileges with option. If a command fails, Tenable Nessus escalates privileges. Plugins 102095 and 102094 report which plugins ran with or without escalated privileges.<br><br>*Note: Enabling this option may increase scan run time by up to 30%.* |
+| **Attempt least privilege** | Cleared | Enables or disables dynamic privilege escalation. When enabled, Tenable Nessus attempts to run the scan with an account with lesser privileges, even if you enable the `Elevate privileges with` option. If a command fails, Tenable Nessus escalates privileges. Plugins 102095 and 102094 report which plugins ran with or without escalated privileges.<br><br>*Note: Enabling this option may increase scan run time by up to 30%.* |
 
 ## Managing Nessus
 
@@ -222,3 +224,5 @@ sudo systemctl start nessusd.service
 [^printer-sharing]: In German, `File and printer sharing` is called `Datei- und Druckerfreigabe`.
 [^linux-scan]: See [Credentialed Checks on Linux](https://docs.tenable.com/nessus/Content/CredentialedChecksOnLinux.htm) and [SSH](https://docs.tenable.com/nessus/Content/SSH.htm).
 [^ps1]: The shell variable PS1 (not to be confused with environment variable) defines the prompt text in the console displayed to the left, before typing in a command. It's default value is described in `.bashrc` with `PS1='\u@\h:~\$ '`. For more information, see [Prompt](https://wiki.ubuntuusers.de/Bash/Prompt/).
+[^sudo-user]: See [How To Create A New Sudo Enabled User on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu) and [How To Edit the Sudoers File](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file)
+[^disable-account-linux]: [How to enable or disable a user?](https://askubuntu.com/a/607108)
