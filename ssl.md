@@ -173,7 +173,10 @@ Links:
 - <https://github.com/JW0914/Wikis/blob/master/Scripts%2BConfigs/OpenSSL/openssl.cnf>
 - <https://github.com/JW0914/Wikis/tree/master/Scripts%2BConfigs/OpenSSL>
 
-<!-- Create config file template for a CA [minimal working example for python] -->
+<!--
+Create config file template for a CA [minimal working example for python]
+openssl x509 -in mycert.pem -text -noout
+-->
 
 ## Annotations
 
