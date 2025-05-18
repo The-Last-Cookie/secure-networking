@@ -114,6 +114,10 @@ Install the root certificate into your browser, so that server certificates sign
 
 TODO
 
+## Method 2: Use a self-signed certificate and manually trust it
+
+text
+
 - <https://gist.github.com/kaczmar2/e1b5eb635c1a1e792faf36508c5698ee>
 - <https://arminreiter.com/2022/01/create-your-own-certificate-authority-ca-using-openssl/>
 - <https://youtu.be/bv47DR_A0hw>
