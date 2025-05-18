@@ -50,40 +50,7 @@ The **CA key** (homelabCA.key) and **CA certificate** (homelabCA.crt) are now re
 
 ### Create a Certificate Configuration File (`cert.cnf`)
 
-Template:
-
-```sh
-# Country Name (C)
-#Organization Name (O)
-#Common Name (CN) - Set this to your server’s hostname or IP address.
-
-# SAN (Subject Alternative Name), [alt-names] is required
-# You can add as many hostname and IP entries as you wish
-
-[req]
-default_md = sha256
-distinguished_name = req_distinguished_name
-req_extensions = v3_ext
-x509_extensions = v3_ext
-prompt = no
-
-[req_distinguished_name]
-C = US
-O = My Homelab
-CN = pi.hole
-
-[v3_ext]
-subjectAltName = @alt_names
-
-# TODO: Add key usage extension
-
-[alt_names]
-DNS.1 = pi.hole                 # Default pihole hostname
-DNS.2 = pihole-test             # Replace with your server's hostname
-DNS.3 = pihole-test.home.arpa   # Replace with your server's FQDN
-IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
-IP.2 = 10.10.10.116             # Another local IP if needed
-```
+See the [certificate template](#certificate-template).
 
 ### Generate a Key and CSR
 
@@ -153,6 +120,43 @@ TODO
 - <https://www.golinuxcloud.com/create-certificate-authority-root-ca-linux/>
 - <https://superuser.com/questions/738612/openssl-ca-keyusage-extension>
 - <https://docs.pi-hole.net/api/tls/>
+
+## Certificate template
+
+Save as `cert.cnf`.
+
+```sh
+# Country Name (C)
+# Organization Name (O)
+# Common Name (CN) - Set this to your server’s hostname or IP address.
+
+# SAN (Subject Alternative Name), [alt-names] is required
+# You can add as many hostname and IP entries as you wish
+
+[req]
+default_md = sha256
+distinguished_name = req_distinguished_name
+req_extensions = v3_ext
+x509_extensions = v3_ext
+prompt = no
+
+[req_distinguished_name]
+C = US
+O = My Homelab
+CN = pi.hole
+
+[v3_ext]
+subjectAltName = @alt_names
+
+# TODO: Add key usage extension
+
+[alt_names]
+DNS.1 = pi.hole                 # Default pihole hostname
+DNS.2 = pihole-test             # Replace with your server's hostname
+DNS.3 = pihole-test.home.arpa   # Replace with your server's FQDN
+IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
+IP.2 = 10.10.10.116             # Another local IP if needed
+```
 
 ## Annotations
 
