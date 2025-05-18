@@ -116,7 +116,7 @@ TODO
 
 ## Method 2: Use a self-signed certificate and manually trust it
 
-text
+TODO
 
 - <https://gist.github.com/kaczmar2/e1b5eb635c1a1e792faf36508c5698ee>
 - <https://arminreiter.com/2022/01/create-your-own-certificate-authority-ca-using-openssl/>
@@ -140,8 +140,8 @@ Save as `cert.cnf`.
 [req]
 default_md = sha256
 distinguished_name = req_distinguished_name
-req_extensions = v3_ext
-x509_extensions = v3_ext
+req_extensions = v3_req
+x509_extensions = v3_ca
 prompt = no
 
 [req_distinguished_name]
@@ -149,18 +149,31 @@ C = US
 O = My Homelab
 CN = pi.hole
 
-[v3_ext]
+[v3_ca]
 subjectAltName = @alt_names
 
-# TODO: Add key usage extension
+[v3_req]
+subjectAltName = @alt_names
+keyUsage = digitalSignature, keyEncipherment, keyAgreement
+extendedKeyUsage = serverAuth
 
 [alt_names]
 DNS.1 = pi.hole                 # Default pihole hostname
 DNS.2 = pihole-test             # Replace with your server's hostname
 DNS.3 = pihole-test.home.arpa   # Replace with your server's FQDN
 IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
-IP.2 = 10.10.10.116             # Another local IP if needed
 ```
+
+Links:
+
+- <https://github.com/openssl/openssl/blob/master/apps/openssl.cnf>
+- <https://docs.openssl.org/master/man5/x509v3_config/#standard-extensions>
+- <https://superuser.com/questions/738612/openssl-ca-keyusage-extension>
+- <https://technotes.shemyak.com/posts/min-openssl-cnf/>
+- <https://github.com/JW0914/Wikis/blob/master/Scripts%2BConfigs/OpenSSL/openssl.cnf>
+- <https://github.com/JW0914/Wikis/tree/master/Scripts%2BConfigs/OpenSSL>
+
+<!-- Create config file template for a CA [minimal working example for python] -->
 
 ## Annotations
 
