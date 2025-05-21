@@ -77,10 +77,10 @@ openssl x509 -req -in tls.csr -CA homelabCA.crt -CAkey homelabCA.key -CAcreatese
 
 - `-req -in tls.csr`: Uses the Certificate Signing Request (CSR) for signing.
 - `-CA homelabCA.crt -CAkey homelabCA.key`: Uses our CA to sign the certificate.
-- `-CAcreateserial`:Generates a unique serial number.
+- `-CAcreateserial`: Generates a unique serial number.
 - `-out tls.crt`: Saves the signed certificate.
 - `-days 365`: Valid for 365 days (1 year).
-- `-extfile cert.cnf` -extensions v3_req → Includes Subject Alternative Names (SAN)s.
+- `-extfile cert.cnf -extensions v3_req`: Includes Subject Alternative Names (SAN)s.
 
 ### Create a combined tls.pem File
 
@@ -106,11 +106,23 @@ sudo service pihole-FTL restart
 
 ### Add the CA to the Trusted Root Certificate Store
 
-Install the root certificate into your browser, so that server certificates signed by this CA will be marked as verified.
+Install the root certificate on the local computer, so that server certificates signed by this CA will be marked as verified.
 
 <!-- installing cert in browser or os root store -> mmc.exe -->
 
-### Issuing additional server certificates with your CA (Optional)
+#### Web browser (Firefox)
+
+TODO
+
+#### Linux
+
+TODO
+
+#### Windows
+
+TODO: mmc.exe
+
+### Issuing additional server certificates with your CA (optional)
 
 Now, the created CA can be used to sign new certificates. If the root CA is stored in the browser, these certificates will automatically be recognised as valid.
 
@@ -126,58 +138,9 @@ openssl x509 -req -in tls.csr -CA homelabCA.crt -CAkey homelabCA.key -CAcreatese
 
 This method is simpler than setting up a CA, however, each self-signed certificate must be installed and trusted manually.
 
-### Create a directory to hold your cert, config, and key files
+For this method, you just need to create a self-signed certificate, similar to how the CA root certificate is created.
 
-```sh
-mkdir -p ~/crt && cd ~/crt
-```
-
-### Create a Certificate Configuration File (`cert.cnf`)
-
-See the [certificate template](#certificate-template).
-
-### Generate a key and self-signed certificate
-
-Use **Elliptic Curve Digital Signature Algorithm (ECDSA)** to generate both the **private key** (`tls.key`) and the **Self-Signed Certificate** (`tls.crt`).
-
-```sh
-openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 365 -keyout tls.key -out tls.crt -config cert.cnf
-```
-
-- `x509`: Creates a self-signed certificate.
-- `-newkey ec`: Creates a new Elliptic Curve (EC) key.
-- `-pkeyopt ec_paramgen_curve:prime256v1`: Uses P-256 (NIST prime256v1) curve.
-- `-noenc`: Skips password protection.
-- `-days 365`: Valid for 365 days (1 year).
-- `-keyout tls.key`: Saves the private key.
-- `-out tls.crt`: Saves the self-signed certificate.
-- `-config cert.cnf` Uses cert configuration file `cert.cnf` defined above.
-
-### Create a combined tls.pem File
-
-```sh
-cat tls.key tls.crt | tee tls.pem
-```
-
-On the Pi-hole server, remove now the existing self-signed certificate files and copy your own `tls.pem` combined certificate to the Pi-hole directory:
-
-```sh
-sudo rm /etc/pihole/tls*
-
-sudo cp tls.pem /etc/pihole
-```
-
-Pi-hole has by default two certificate files, the root CA certificate is in `/etc/pihole/tls_ca.crt`, and the server certificate in `/etc/pihole/tls.pem`.
-
-### Restart Pi-hole
-
-```sh
-sudo service pihole-FTL restart
-```
-
-### Install self-signed certificate
-
-<!-- installing cert in browser or os root store -> mmc.exe -->
+After that, you can install the certificate file where you need it.
 
 ## Certificate template
 
