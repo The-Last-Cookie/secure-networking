@@ -31,17 +31,17 @@ mkdir -p ~/crt && cd ~/crt
 ### Create a Certificate Authority (CA) Key and Certificate
 
 ```sh
-openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 3650 -keyout homelabCA.key -out homelabCA.crt -subj "/C=US/O=My Homelab CA/CN=MyHomelabCA"
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 3650 -keyout homelabCA.key -out homelabCA.crt -subj "/C=US/O=My Homelab CA/CN=MyHomelabCA"
 ```
 
-- `x509`: Generates a self-signed certificate (for a CA).
-- `newkey ec`: Creates a new EC key.
-- `pkeyopt ec_paramgen_curve:prime256v1`: Uses P-256 curve.
-- `nodes`: Skips password protection (optional).
+- `-x509`: Generates a self-signed certificate (for a CA).
+- `-newkey ec`: Creates a new EC key.
+- `-pkeyopt ec_paramgen_curve:prime256v1`: Uses P-256 curve.
+- `-noenc`: Skips password protection (optional).
 - `-days 3650`: Valid for 10 years.
-- `keyout homelabCA.key`: Saves the private key.
-- `out homelabCA.crt`: Saves the self-signed CA certificate.
-- `subj`: Provides the Distinguished Name (DN)
+- `-keyout homelabCA.key`: Saves the private key.
+- `-out homelabCA.crt`: Saves the self-signed CA certificate.
+- `-subj`: Provides the Distinguished Name (DN)
   - `C=US`: Country
   - `O=My Homelab CA`: Organization (CA)
   - `CN=MyHomelabCA`: Common Name (CA)
@@ -57,12 +57,12 @@ See the [certificate template](#certificate-template).
 Use Elliptic Curve Digital Signature Algorithm (ECDSA) to generate both the private key (`tls.key`) and Certificate Signing Request (CSR) (`tls.csr`).
 
 ```sh
-openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -keyout tls.key -out tls.csr -config cert.cnf
+openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -keyout tls.key -out tls.csr -config cert.cnf
 ```
 
 - `-newkey ec`: Creates a new EC key.
 - `-pkeyopt ec_paramgen_curve:prime256v1`: Uses P-256 curve.
-- `-nodes` - No password on the private key.
+- `-noenc` - No password on the private key.
 - `-keyout tls.key`: Saves the private key.
 - `-out tls.csr`: Saves the certificate signing request (CSR).
 - `-config cert.cnf`: Uses the config file for CSR details.
@@ -116,7 +116,7 @@ Now, the created CA can be used to sign new certificates. If the root CA is stor
 
 ```sh
 # New certificate signing request
-openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -keyout tls2.key -out tls2.csr -config cert2.cnf
+openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -keyout tls2.key -out tls2.csr -config cert2.cnf
 
 # Sign the new certificate
 openssl x509 -req -in tls.csr -CA homelabCA.crt -CAkey homelabCA.key -CAcreateserial -out tls2.crt -days 365 -sha256 -extfile cert2.cnf -extensions v3_ext
@@ -141,13 +141,13 @@ See the [certificate template](#certificate-template).
 Use **Elliptic Curve Digital Signature Algorithm (ECDSA)** to generate both the **private key** (`tls.key`) and the **Self-Signed Certificate** (`tls.crt`).
 
 ```sh
-openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 365 -keyout tls.key -out tls.crt -config cert.cnf
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 365 -keyout tls.key -out tls.crt -config cert.cnf
 ```
 
 - `x509`: Creates a self-signed certificate.
 - `-newkey ec`: Creates a new Elliptic Curve (EC) key.
 - `-pkeyopt ec_paramgen_curve:prime256v1`: Uses P-256 (NIST prime256v1) curve.
-- `-nodes`: Skips password protection.
+- `-noenc`: Skips password protection.
 - `-days 365`: Valid for 365 days (1 year).
 - `-keyout tls.key`: Saves the private key.
 - `-out tls.crt`: Saves the self-signed certificate.
