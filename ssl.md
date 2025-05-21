@@ -225,14 +225,23 @@ DNS.3 = pihole-test.home.arpa   # Replace with your server's FQDN
 IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
 ```
 
-Links:
+## Links
 
-- <https://github.com/openssl/openssl/blob/master/apps/openssl.cnf>
-- <https://docs.openssl.org/master/man5/x509v3_config/#standard-extensions>
-- <https://superuser.com/questions/738612/openssl-ca-keyusage-extension>
-- <https://technotes.shemyak.com/posts/min-openssl-cnf/>
-- <https://github.com/JW0914/Wikis/blob/master/Scripts%2BConfigs/OpenSSL/openssl.cnf>
-- <https://github.com/JW0914/Wikis/tree/master/Scripts%2BConfigs/OpenSSL>
+*TODO: Integrate these in the document.*
+
+General workflow:
+
+- [Lockdown the unencrypted key file via permissions (filesystem ACL)](https://stackoverflow.com/a/23718323)
+- [How can I generate a self-signed SSL certificate using OpenSSL?](https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl) (several answers with useful input, especially about the parameters to set in the config file)
+
+Creation of the config file:
+
+- [Official example for a config file](https://github.com/openssl/openssl/blob/master/apps/openssl.cnf)
+- [openssl docs](https://docs.openssl.org/master/man5/x509v3_config/#standard-extensions)
+- [KeyUsage extension](https://superuser.com/questions/738612/openssl-ca-keyusage-extension)
+- [Minimal cert config file](https://technotes.shemyak.com/posts/min-openssl-cnf/)
+- [Example for a config file](https://github.com/JW0914/Wikis/blob/master/Scripts%2BConfigs/OpenSSL/openssl.cnf)
+- [KeyUsage example](https://github.com/JW0914/Wikis/tree/master/Scripts%2BConfigs/OpenSSL)
 
 <!--
 Create config file template for a CA [minimal working example for python]
