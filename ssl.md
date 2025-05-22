@@ -1,12 +1,12 @@
 # Secure Socket Layer (SSL)
 
-**Transport Layer Security** (TLS), formerly **Secure Socket Layer** (SSL), is used to encrypt the data which is transported over an insecure channel, as well as that the data can not be tampered with.
+**Transport Layer Security** (TLS), formerly **Secure Socket Layer** (SSL), is used to encrypt the data which is transported over an insecure channel, as well as make sure that the data can not be tampered with.
 
 To create a connection over SSL, certificates need to be exchanged and verified (from one endpoint or both). Certificates ensure that the connection is secure and can not be manipulated by a third party.[^schutzziele] For this, a cipher suite[^naming-scheme] is negotiated which usually contains
 
 - a key exchange algorithm: the symmetric key for encryption is transmitted to the other endpoint via an exchange[^key-exchange]
 - an encryption algorithm: the actual data is being encrypted so no malicious actor is able to view the data (confidentiality)
-- a message authentication code (MAC): this ensures that the data being sent is not altered by a malicious actor via hash validation (digital signing)
+- a message authentication code (MAC): this ensures via hash validation that the data being sent is not altered by a malicious actor (integrity provided by digital signing)
 
 ## Method 1: Create your own Certificate Authority (CA)
 
@@ -97,6 +97,16 @@ sudo cp tls.pem /etc/pihole
 ```
 
 Pi-hole has by default two certificate files, the root CA certificate is in `/etc/pihole/tls_ca.crt`, and the server certificate in `/etc/pihole/tls.pem`.
+
+### Set file permissions
+
+Make sure that only the required permissions are applied:
+
+```sh
+sudo chown pihole:pihole /etc/pihole/tls.pem
+
+sudo chmod 600 /etc/pihole/tls.pem
+```
 
 ### Restart Pi-hole
 
@@ -189,6 +199,10 @@ DNS.2 = pihole-test             # Replace with your server's hostname
 DNS.3 = pihole-test.home.arpa   # Replace with your server's FQDN
 IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
 ```
+
+*Key* takeaways for setting up a template file:
+
+- The CA root certificate should carry no key usages, except `keyCertSign` and `cRLSign`.
 
 ## Links
 
