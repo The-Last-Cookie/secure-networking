@@ -31,7 +31,7 @@ mkdir -p ~/crt && cd ~/crt
 ### Create a Certificate Authority (CA) Key and Certificate
 
 ```sh
-openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 3650 -keyout homelabCA.key -out homelabCA.crt -subj "/C=US/O=My Homelab CA/CN=MyHomelabCA"
+openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 3650 -keyout homelabCA.key -out homelabCA.crt -config cert.cnf
 ```
 
 - `-x509`: Generates a self-signed certificate (for a CA).
@@ -41,10 +41,7 @@ openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 
 - `-days 3650`: Valid for 10 years.
 - `-keyout homelabCA.key`: Saves the private key.
 - `-out homelabCA.crt`: Saves the self-signed CA certificate.
-- `-subj`: Provides the Distinguished Name (DN)
-  - `C=US`: Country
-  - `O=My Homelab CA`: Organization (CA)
-  - `CN=MyHomelabCA`: Common Name (CA)
+- `-config cert.cnf`: Use configuration file.
 
 The **CA key** (homelabCA.key) and **CA certificate** (homelabCA.crt) are now ready to be used to sign server certificates.
 
@@ -180,7 +177,6 @@ CN = pi.hole
 [v3_ca]
 subjectAltName = @alt_names
 subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid:always, issuer:always
 basicConstraints = critical, CA:TRUE
 keyUsage = keyCertSign
 
@@ -188,7 +184,6 @@ keyUsage = keyCertSign
 [v3_req]
 subjectAltName = @alt_names
 subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid:always, issuer:always
 basicConstraints = CA:FALSE
 keyUsage = digitalSignature, keyEncipherment, keyAgreement
 extendedKeyUsage = serverAuth
