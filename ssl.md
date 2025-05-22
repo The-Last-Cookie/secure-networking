@@ -169,11 +169,16 @@ CN = pi.hole
 # Used for self-signed certificates
 [v3_ca]
 subjectAltName = @alt_names
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always, issuer:always
+basicConstraints = critical, CA:TRUE
 keyUsage = keyCertSign
 
 # Used for certificate signing requests
 [v3_req]
 subjectAltName = @alt_names
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always, issuer:always
 basicConstraints = CA:FALSE
 keyUsage = digitalSignature, keyEncipherment, keyAgreement
 extendedKeyUsage = serverAuth
