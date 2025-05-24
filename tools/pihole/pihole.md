@@ -20,69 +20,11 @@ The web interface is now accessible via `http://<IP address>/admin`. The standar
 
 ## Serving the pihole service over SSL
 
-<!--TODO: Move to ssl.md?-->
+When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole v6, it's `civetweb`.[^web-v5]
 
-When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole v5, it's `lighttpd`.
+How to setup SSL in general is described in [SSL](../../ssl.md).
 
-**Step 1:** Use OpenSSL to create the pem file.
-
-```sh
-openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -noenc
-```
-
-This pem file now contains a key and a certificate (.crt) file.
-
-Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. The location doesn't really matter here as long as access is given to the files needed (*sudo chown www-data [pem file]*). "SSL" or "TLS" as the folder name is the most common setup.
-
-**Step 2:** Add the SSL config in the `/etc/lighttpd/conf-available/10-ssl.conf` file, where "10" notes down the order in which the config files are loaded in (which number is used is not important here).
-
-```php
-# https://redmine.lighttpd.net/projects/lighttpd/wiki/Docs_SSL
-# https://doc.lighttpd.net/lighttpd2/mod_openssl.html
-
-server.modules += ("mod_openssl")
-
-$HTTP["host"] =~ "(<IP address>|^pi.hole$)" {
-
-  # Enable the SSL engine with a LE cert, only for this specific host
-  $SERVER["socket"] == ":443" {
-    ssl.engine = "enable"
-    ssl.pemfile = "/etc/lighttpd/ssl/pihole.pem"
-    ssl.openssl.ssl-conf-cmd = ("MinProtocol" => "TLSv1.3", "Options" => "-ServerPreference")
-  }
-
-  # Redirect HTTP to HTTPS
-  $HTTP["scheme"] == "http" {
-    $HTTP["host"] =~ ".*" {
-      url.redirect = (".*" => "https://%0$0")
-    }
-  }
-}
-```
-
-**Step 3:** Enable the newly added module via `lighty-enable-mod`.
-
-```sh
-sudo lighty-enable-mod ssl
-```
-
-This will create a symlink to the config file in `/etc/lighttpd/conf-enabled/`.
-
-*Note: `lighty-disable-mod` can disable mods.*
-
-**Step 4:** Force-reload the lighttpd server
-
-```sh
-sudo service lighttpd force-reload
-```
-
-### Notes
-
-Opening the service in the browser now already works and the site can be accessed, however, the browser will warn the user because the certificate is self-signed.
-
-This does not add anything to security because IF an attacker can read the password from the unencrypted connection via MITM, there is a far greater problem. For this attack to work, the hacker needs to already have access to the network.
-
-Nevertheless may it be good for practice to see how certificates work and how they are enabled in a webserver.
+SSL is the de facto standard today and is not difficult to implement. Absolute security can not be guaranteed, especially when there are vulnerable IoT devices in the network that could be hacked. So, SSL support should definitely be added whenever possible.
 
 ## Creating a blocklist
 
@@ -163,4 +105,5 @@ expire = 14
 ## Annotations
 
 [^router-settings]: An example setting for the Fritz!Box router has been added [here](/../router.md).
+[^web-v5]: Prior to Pi-hole v6, it was lighttpd.
 [^ping]: This can also be identified by using `ping`. If the IP is wrong, the command will say `Temporary failure in name resolution`.
