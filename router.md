@@ -37,7 +37,7 @@ DNS over TLS (DoT):
 - Verschlüsselte Namensauflösung im Internet (DNS over TLS): Check
   - Zertifikatsprüfung für verschlüsselte Namensauflösung im Internet erzwingen: Check
 
-Auflösungsnamen der DNS-Server
+Auflösungsnamen der DNS-Server:
 
 - unfiltered.adguard-dns.com
 - dnsforge.de
