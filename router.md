@@ -22,6 +22,8 @@ Now, add public DNS servers to the router's settings under `Internet/Zugangsdate
 
 ## Using DNS over TLS (DoT)
 
+*Note: This technology is rather unstable. It may cause complete DNS outage if encryption is enforced and there is no fallback to unencrypted DNS traffic.*
+
 DNS requests from the local network should be encrypted via TLS before being sent to an upstream DNS server. This can be configured in the router under `Internet/Zugangsart/DNS-Server`. Here are some as an example:
 
 DNSv4-Server:
