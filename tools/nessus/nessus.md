@@ -14,7 +14,7 @@ For now, Tenable Nessus Essentials (from now on *Tenable*) will be used because 
 *Notice: To use Nessus efficiently, it is recommend to use a Raspberry Pi 4 Model B with at least 8 GB RAM.*
 
 1. Download the package file for the current version (`.deb`).
-2. Install the package via `dpkg -i Nessus-10.0.0-raspberrypios_armhf.deb`.
+2. Install the package via `dpkg -i Nessus-10.0.0-raspberrypios_armhf.deb`.[^64-bit]
 3. Start the Nessus daemon with `/bin/systemctl start nessusd.service`.
 4. Open Tenable in the browser with `https://<IP address>:8834`. Use *localhost* if the installation is done locally.
 5. Perform the remaining Nessus installation steps in the browser.
@@ -171,6 +171,7 @@ sudo systemctl start nessusd.service
 
 ## Annotations
 
+[^64-bit]: When using `Raspberry Pi OS Lite (64 bit)` as the OS, the package for Linux Ubuntu aarch64 may work. The 32-bit package version (armhf) for Pi OS Lite does not work.
 [^0D53a00007ZjncaCAB]: [Steve Gillham-1 in "Looking for clarification on Essentials 16 limit."](https://community.tenable.com/s/question/0D53a00007ZjncaCAB/looking-for-clarification-on-essentials-16-limit)
 [^admin-privileges]: For more details, see [Credentialed Scanning and Privileged Account Use](https://docs.tenable.com/nessus/compliance-checks-reference/Content/CredentialedScanningandPrivilegedAccountUse.htm).
 [^access-level]: See [Tenable Nessus Credentialed Checks § Access Level](https://docs.tenable.com/nessus/Content/NessusCredentialedChecks.htm#Access-Level).
