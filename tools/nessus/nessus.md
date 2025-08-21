@@ -175,6 +175,21 @@ Tenable Nessus encrypts all passwords stored in policies. However, Tenable recom
 
 When no scan is running, the user account can be disabled to forbid any login (even SSH) by `sudo usermod --expiredate 1 <username>`. Reenable the account with `sudo usermod --expiredate "" <username>`.[^disable-account-linux]
 
+To verify that the login over SSH works, use the `id` command:
+
+```sh
+ssh -i <ssh_private_key> nessus-scan@<scanned_host> id
+```
+
+#### Activate SSH server on scanned host
+
+The host that should be scanned by Nessus requires a SSH server, so Nessus can login to the system.[^SSH-server]
+
+```sh
+sudo apt install openssh-server
+sudo systemctl start ssh
+```
+
 #### Global Credential Settings
 
 | Option | Default Value | Description |
@@ -227,3 +242,4 @@ sudo systemctl start nessusd.service
 [^ps1]: The shell variable PS1 (not to be confused with environment variable) defines the prompt text in the console displayed to the left, before typing in a command. It's default value is described in `.bashrc` with `PS1='\u@\h:~\$ '`. For more information, see [Prompt](https://wiki.ubuntuusers.de/Bash/Prompt/).
 [^sudo-user]: See [How To Create A New Sudo Enabled User on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu) and [How To Edit the Sudoers File](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file)
 [^disable-account-linux]: [How to enable or disable a user?](https://askubuntu.com/a/607108)
+[^SSH-server]: See more details [here](https://www.veuhoff.net/ubuntu-ssh-server-installation-und-konfiguration-aktivierung/).
