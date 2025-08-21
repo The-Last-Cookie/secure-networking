@@ -6,24 +6,11 @@ Tutorials:
   - [Anleitungen](https://github.com/RPiList/specials/tree/master/Anleitungen)
   - [Benötigte Hardware](https://github.com/RPiList/specials/blob/master/Ben%C3%B6tigte%20Hardware.md)
 - [DAS halbiert eure Ladezeiten | Pi-Hole-Tutorial](https://youtu.be/FjNkv2aPiiA)
+- [Pi-hole: Einrichtung und Konfiguration mit Fritz!Box](https://www.kuketz-blog.de/pi-hole-einrichtung-und-konfiguration-mit-fritzbox-adblocker-teil1/)
 
 ## Installation
 
-Write the Raspberry Pi image to a SD card with the Raspberry Pi imager.
-
-Since the server should be lightweight and will be accessed only via ssh, the image `Raspberry Pi OS Lite (32 bit)` is chosen.
-
-<!--There's now also a 64 bit image available?-->
-
-To activate ssh from the beginning, press `Ctrl` + `Shift` + `X` and input a username and passwort combination or a public key.
-
-After the installation has finished, let the device connect to the network and find out its IP address.
-
-In the router settings, it is recommended to set the Raspberry Pi's IP address to a static value (this is needed to more easily configure the Raspberry PI as the DNS).
-
-Connect to the Raspberry Pi via `ssh <IP address> -l pi`.
-
-Then, install pihole with `curl -sSL https://install.pi-hole.net | bash`.
+Pihole can be installed with `sudo curl -sSL https://install.pi-hole.net | bash`.
 
 While installing, note down the web interface password that is shown in the terminal to later access the web interface for the first time.
 
@@ -31,77 +18,13 @@ Now add the Raspberry Pi's IP address as a DNS to your router's settings.[^route
 
 The web interface is now accessible via `http://<IP address>/admin`. The standard port of the web interface is 80.
 
-### Pihole v6
-
-The next major version uses a different webserver. Thus all PHP components and the old webserver should be removed upon migration.
-
-```sh
-apt remove php lighttpd
-```
-
 ## Serving the pihole service over SSL
 
-When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole, it's `lighttpd`.
+When installing SSL on a web server, it is crucial to understand what web server is used and what the configuration looks like. Examples for web servers are `Nginx` and `Apache`. In the case of pihole v6, it's `civetweb`.[^web-v5]
 
-**Step 1:** Use OpenSSL to create the pem file.
+How to setup SSL in general is described in [SSL](../../ssl.md).
 
-```sh
-openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -noenc
-```
-
-This pem file now contains a key and a certificate (.crt) file.
-
-Following the above, the `.pem` file needs to be moved to `/etc/lighttpd/ssl/`. The location doesn’t really matter here as long as access is given to the files needed (*sudo chown www-data [pem file]*). "SSL" or "TLS" as the folder name is the most common setup.
-
-**Step 2:** Add the SSL config in the `/etc/lighttpd/conf-available/10-ssl.conf` file, where "10" notes down the order in which the config files are loaded in (which number is used is not important here).
-
-```php
-# https://redmine.lighttpd.net/projects/lighttpd/wiki/Docs_SSL
-# https://doc.lighttpd.net/lighttpd2/mod_openssl.html
-
-server.modules += ("mod_openssl")
-
-$HTTP["host"] =~ "(<IP address>|^pi.hole$)" {
-
-  # Enable the SSL engine with a LE cert, only for this specific host
-  $SERVER["socket"] == ":443" {
-    ssl.engine = "enable"
-    ssl.pemfile = "/etc/lighttpd/ssl/pihole.pem"
-    ssl.openssl.ssl-conf-cmd = ("MinProtocol" => "TLSv1.3", "Options" => "-ServerPreference")
-  }
-
-  # Redirect HTTP to HTTPS
-  $HTTP["scheme"] == "http" {
-    $HTTP["host"] =~ ".*" {
-      url.redirect = (".*" => "https://%0$0")
-    }
-  }
-}
-```
-
-**Step 3:** Enable the newly added module via `lighty-enable-mod`.
-
-```sh
-sudo lighty-enable-mod ssl
-```
-
-This will create a symlink to the config file in `/etc/lighttpd/conf-enabled/`.
-
-*Note: `lighty-disable-mod` can disable mods.*
-
-**Step 4:** Force-reload the lighttpd server
-
-```sh
-sudo service lighttpd force-reload
-```
-
-### Notes
-
-Opening the service in the browser now already works and the site can be accessed, however, the browser will warn the user because the certificate is self-signed.
-
-This does not add anything to security because IF an attacker can read the password from the unencrypted connection via MITM, there is a far greater problem. For this attack to work, the hacker needs to already have access to the network.
-
-Nevertheless may it be good for practice to see how certificates work and how they are enabled in a webserver.
+SSL is the de facto standard today and is not difficult to implement. Absolute security can not be guaranteed, especially when there are vulnerable IoT devices in the network that could be hacked. So, SSL support should definitely be added whenever possible.
 
 ## Creating a blocklist
 
@@ -156,71 +79,31 @@ pihole has the ability to define domains to link to devices in the local network
 
 There is also unbound, enabling recursive dns lookup.
 
-- [Pihole lan dns](https://nerdig.es/pi-hole-lan-dns/)
-  - [Script](https://nerdig.es/raspi-eth0-watchdog/) that checks if the ethernet connection is still up (to the dns server)
 - [Using unbound as a local recursive dns](https://docs.pi-hole.net/guides/dns/unbound/) (especially round robin lookup)
 - [Pi-hole: Einrichtung und Konfiguration mit unbound](https://www.kuketz-blog.de/pi-hole-einrichtung-und-konfiguration-mit-unbound-adblocker-teil2/)
 
 ## General maintenance
 
-Common commands:
-
-| Command | Description |
-| :-: | :-- |
-| sudo systemctl reboot | Reboot the system |
-| sudo shutdown --poweroff | Shutdown the system (*systemctl poweroff* does the same but does not provide any scheduling ability) |
-| lscpu | Display CPU information |
-| lsblk | Display disk information |
-| free -m | Show RAM information |
-
-Commands related to pihole:
-
 | Command | Description |
 | :-: | :-- |
 | pihole -up | Update pihole |
-| pihole -a -p | Set password for the web interface |
-
-### Disable unneeded interfaces
-
-To minise used energy, the boot config can be configured in `/boot/firmware/config.txt`, so that unnecessary interfaces are deactivated.[^pihole-boot] Some are listed below:
-
-```sh
-# Disable analog audio 
-dtparam=audio=off
-
-# Disable audio via HDMI 
-dtoverlay=vc4-kms-v3d,noaudio 
-
-# Disable Bluetooth, WiFi and HDMI 
-dtoverlay=disable-bt  
-dtoverlay=disable-wifi 
-hdmi_blanking=1
-```
-
-(The system needs to be rebooted after changes have been applied to this file.)
+| pihole setpassword | Set password for the web interface |
 
 ### Reduce memory access
 
-To minimise load on the SD card, pihole can be configured to not save as often to disk. In `/etc/pihole/pihole-FTL.conf`, type in the following settings:
+To minimise load on the SD card, pihole can be configured to not save as often to disk. In `/etc/pihole/pihole.toml`, type in the following settings:
 
 ```sh
-#; How often are queries stored in FTL's database [minutes] | Default: 1.0
-DBINTERVAL=30
-#; IP addresses older than the specified number of days are removed from database | Default: 365
-MAXDBDAYS=14
+# How long should queries be stored in the database [days]? | Default: 91
+maxDBdays = 14
+# How often do we store queries in FTL's database [seconds]? | Default: 60
+DBinterval = 300
+# How long should IP addresses be kept in the network_addresses table [days]? | Default: 91
+expire = 14
 ```
-
-### (Temporary) apt key file problem
-
-`apt-key` is deprecated and only meant to delete old keys. Every repository managed by apt now receives its own key.
-
-Thus, they are moved from `/etc/apt/trusted.gpg` to `/etc/apt/trusted.d/key1.gpg`, `/etc/apt/trusted.d/key2.gpg` and so on.
-
-*For newly installed Raspberry Pis*, it is enough to move the key file to the correct location via `mv /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/bookworm_InRelease.gpg`. The name of the `.gpg` file does not matter here, it is solely important that the file is at its right place.[^apt-key]
 
 ## Annotations
 
 [^router-settings]: An example setting for the Fritz!Box router has been added [here](/../router.md).
+[^web-v5]: Prior to Pi-hole v6, it was lighttpd.
 [^ping]: This can also be identified by using `ping`. If the IP is wrong, the command will say `Temporary failure in name resolution`.
-[^pihole-boot]: The full documentation regarding this file is available [here](https://www.raspberrypi.com/documentation/computers/config_txt.html).
-[^apt-key]: [Warnung apt keyring beim Update beheben](https://forum-raspberrypi.de/forum/thread/60014-warnung-apt-keyring-beim-update-beheben/)
