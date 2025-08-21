@@ -159,7 +159,7 @@ Create a key pair with `ssh-keygen -t ed25519`. It is recommended to set **nessu
 
 The private key will **stay on the server running Nessus**. The public key will be distributed to all clients that are scanned.
 
-To add a user for Nessus to login with, use the `adduser <username>` command. A prompt asking for the password and some optional information will appear. It does not matter what is entered in the prompt, instead lock the user account with `passwd –l <username>`. Now, the account has no valid password set and only login via SSH is enabled.
+To add a user for Nessus to login with, use the `adduser <username>` command. A prompt asking for the password and some optional information will appear. It does not matter what is entered in the prompt.
 
 Then, add the user to the `sudo` group with `usermod -aG sudo <username>`. Commands issued with sudo by this user will now run with root privileges.[^sudo-user]
 
