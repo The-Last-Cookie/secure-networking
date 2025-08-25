@@ -194,14 +194,18 @@ sudo apt install openssh-server
 sudo systemctl start ssh
 ```
 
-#### Global Credential Settings
+#### Scan configuration in Nessus
 
-| Option | Default Value | Description |
-| :-: | :-: | :-- |
-| **known_hosts file** | none | If an SSH **known_hosts file** is available and provided as part of the Global Credential Settings of the scan policy in the **known_hosts file** field, Tenable Nessus attempts to log into hosts in this file. This can ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control. |
-| **Preferred port** | 22 | You can set this option to direct Tenable Nessus to connect to SSH if it is running on a port other than 22. |
-| **Client version** | OpenSSH_5.0 | Specifies which type of SSH client Tenable Nessus impersonates while scanning. |
-| **Attempt least privilege** | Cleared | Enables or disables dynamic privilege escalation. When enabled, Tenable Nessus attempts to run the scan with an account with lesser privileges, even if you enable the `Elevate privileges with` option. If a command fails, Tenable Nessus escalates privileges. Plugins 102095 and 102094 report which plugins ran with or without escalated privileges.<br><br>*Note: Enabling this option may increase scan run time by up to 30%.* |
+| Option | Value |
+| :-: | :-: |
+| Authentication method | Public key |
+| Username | The Nessus \<username\> account used for scanning. |
+| Private key | The private key you have saved on the Nessus scanner as described above. |
+| Private key passphrase | In case you have defined a passphrase for the private key. |
+| Elevate privileges with | sudo |
+| known_hosts file | Add your known_hosts file here. |
+
+If an SSH **known_hosts file** is available and provided as part of the Global Credential Settings of the scan policy in the **known_hosts file** field, Tenable Nessus attempts to log into hosts in this file. This can ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control.
 
 ## Managing Nessus
 
