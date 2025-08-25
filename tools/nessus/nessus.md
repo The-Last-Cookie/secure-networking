@@ -178,7 +178,7 @@ When no scan is running, the user account can be disabled to forbid any login (e
 To verify that the login over SSH works, use the `id` command:
 
 ```sh
-ssh -i <ssh_private_key> nessus-scan@<scanned_host> id
+ssh -i <ssh_private_key> <username>@<scanned_host> id
 ```
 
 #### Activate SSH server on scanned host

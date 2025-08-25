@@ -1,2 +1,2 @@
 sudo systemctl stop ssh
-sudo usermod --expiredate 1 nessus-scan
+sudo usermod --expiredate 1 <username>
