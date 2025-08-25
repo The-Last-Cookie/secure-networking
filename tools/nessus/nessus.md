@@ -159,6 +159,8 @@ Create a key pair with `ssh-keygen -t ed25519`. It is recommended to set **nessu
 
 The private key will **stay on the server running Nessus**. The public key will be distributed to all clients that are scanned.
 
+#### Host settings
+
 To add a user for Nessus to login with, use the `adduser <username>` command. A prompt asking for the password and some optional information will appear. It does not matter what is entered in the prompt.
 
 Then, add the user to the `sudo` group with `usermod -aG sudo <username>`. Commands issued with sudo by this user will now run with root privileges.[^sudo-user]
@@ -170,6 +172,8 @@ chown -R <username>:<username> /home/<username>/.ssh/
 chmod 700 /home/<username>/.ssh
 chmod 600 /home/<username>/.ssh/authorized_keys
 ```
+
+The user also needs to be configured to allow Nessus to escalate privileges. The more privileges the user has, the deeper Nessus can scan the system. Create a new dedicated file in the sudoers space with `sudo visudo -f /etc/sudoers.d/nessus`. In the editor that appears (usually nano), type in `<username> ALL=(ALL) NOPASSWD: ALL` to disable the password requirement for the Nessus user.[^sudoers] As the last step, set the permissions to the lowest level required with `sudo chmod 0440 /etc/sudoers.d/nessus`, so the file is only readable by root. Giving the user all permissions is fine because the user gets deactivated after the scan anyway.
 
 Tenable Nessus encrypts all passwords stored in policies. However, Tenable recommends using SSH keys for authentication rather than SSH passwords. This helps ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a login into a system that may not be under your control.
 
@@ -241,5 +245,6 @@ sudo systemctl start nessusd.service
 [^linux-scan]: See [Credentialed Checks on Linux](https://docs.tenable.com/nessus/Content/CredentialedChecksOnLinux.htm) and [SSH](https://docs.tenable.com/nessus/Content/SSH.htm).
 [^ps1]: The shell variable PS1 (not to be confused with environment variable) defines the prompt text in the console displayed to the left, before typing in a command. It's default value is described in `.bashrc` with `PS1='\u@\h:~\$ '`. For more information, see [Prompt](https://wiki.ubuntuusers.de/Bash/Prompt/).
 [^sudo-user]: See [How To Create A New Sudo Enabled User on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu) and [How To Edit the Sudoers File](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file)
+[^sudoers]: [How do I run specific sudo commands without a password?](https://askubuntu.com/questions/159007/how-do-i-run-specific-sudo-commands-without-a-password)
 [^disable-account-linux]: [How to enable or disable a user?](https://askubuntu.com/a/607108)
 [^SSH-server]: See more details [here](https://www.veuhoff.net/ubuntu-ssh-server-installation-und-konfiguration-aktivierung/).
