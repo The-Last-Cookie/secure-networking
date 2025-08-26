@@ -1,6 +1,8 @@
 import config
 import pyhole
 
+PI_MAC=config.get("pi_mac")
+
 cert = config.get('cert_bundle')
 password = config.get('password')
 
@@ -14,9 +16,13 @@ with open("devices.txt", mode="r") as f:
 devices = pi.network.get_devices()
 
 for device in devices:
-	if device['hwaddr'] not in current_devices:
-		print(f"Alert: {device['hwaddr']} not found in device list.")
-		current_devices.append(device['hwaddr'])
+	mac_addr = device['hwaddr']
+	if mac_addr not in current_devices:
+		if mac_addr == "00:00:00:00:00:00" or mac_addr == PI_MAC:
+			continue
+
+		print(f"Alert: {mac_addr} not found in device list.")
+		current_devices.append(mac_addr + "\n")
 
 with open("devices.txt", mode="w") as f:
 	f.writelines(current_devices)
