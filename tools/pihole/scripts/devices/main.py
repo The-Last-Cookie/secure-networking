@@ -1,3 +1,5 @@
+import os
+
 import config
 import pyhole
 
@@ -12,6 +14,9 @@ pi.authenticate(password)
 
 with open("devices.txt", mode="r") as f:
 	current_devices = f.readlines()
+
+# Make sure the file gets properly replaced by the new one
+os.remove("devices.txt")
 
 devices = pi.network.get_devices()
 
