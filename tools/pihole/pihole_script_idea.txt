@@ -1,7 +1,0 @@
-1. Script that calculates the overlapping domains compared to the database in percent
-
-The given domain list overlaps to 4 % with the database (5/3462 domains)
-
-2. Script that outputs the number of duplicates in the database
-
-3. Script that updates the adlists from sefinek (adlists all need to be removed and readded in case a whole new list was added)

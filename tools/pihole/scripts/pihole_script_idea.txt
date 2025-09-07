@@ -1,0 +1,30 @@
+1. Script that calculates the overlapping domains from a list compared to the database (in percent)
+
+The given domain list overlaps to 4 % with the database (5/3462 domains)
+
+List endpoint? --> get all lists
+then download lists, combine into one list and compare with given list
+OR execute script on pihole device and get lists directly via gravity.db
+
+is there an easy way to get total number of domains in database?
+
+differentiate allow/block list?
+filter for enabled/disabled?
+handle exact/regex?
+
+User input - Address of the list you want to add: Path - Type of list: Allow/Block
+
+pi.ftl.get_ftl_info()["database"]["gravity"] --> Number of collected exact domains on lists
+
+2. Script that outputs the number of duplicates in the database
+
+3. Script that updates the adlists from sefinek (adlists all need to be removed and readded in case a whole new list was added)
+
+4. Create group which does not block anything and then add script for moving clients to this group or away from this group
+
+5. SIEM: check if new devices connected to the network (to the pi.hole)
+
+pi.network.get_devices(), then check regularly if any new devices are in the list
+
+
+api documentation is in https://pi.hole/api/docs
