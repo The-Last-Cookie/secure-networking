@@ -4,9 +4,11 @@
 
 To create a connection over SSL, certificates need to be exchanged and verified (from one endpoint or both). Certificates ensure that the connection is secure and can not be manipulated by a third party.[^schutzziele] For this, a cipher suite[^naming-scheme] is negotiated which usually contains
 
-- a key exchange algorithm: the symmetric key for encryption is transmitted to the other endpoint via an exchange[^key-exchange]
-- an encryption algorithm: the actual data is being encrypted so no malicious actor is able to view the data (confidentiality)
-- a message authentication code (MAC): this ensures via hash validation that the data being sent is not altered by a malicious actor (integrity provided by digital signing)
+- a **key exchange algorithm**: the symmetric key for encryption is transmitted to the other endpoint via an exchange[^key-exchange]
+- an **encryption algorithm**: the actual data is being encrypted so no malicious actor is able to view the data (confidentiality)
+- a **message authentication code** (MAC): this ensures via hash validation that the data being sent is not altered by a malicious actor (integrity provided by digital signing)
+
+The cipher suite also mentions which algorithms are used to authenticate the server and/or client.[^authentication]
 
 ## Method 1: Create your own Certificate Authority (CA)
 
@@ -233,4 +235,5 @@ openssl x509 -in mycert.pem -text -noout
 [^schutzziele]: "Schutzziele": [Motivation und Ziele der Informationssicherheit](https://de.wikipedia.org/wiki/Informationssicherheit#Motivation_und_Ziele_der_Informationssicherheit)
 [^naming-scheme]: A more detailed explanation on the naming scheme can be found in [Cipher suite § Naming scheme](https://en.wikipedia.org/wiki/Cipher_suite#Naming_scheme)
 [^key-exchange]: Examples of this include the Diffie-Hellman-Exchange or the encryption of the symmetric key with a public/private key pair.
+[^authentication]: Examples are RSA, Digital Signature Algorithm (DSA) and ECDSA (DSA with elliptic curves). To summarise, RSA can be used both for signing and key exchange, while Diffie-Hellman can only be used to generate a symmetric key for en-/decryption and DSA can only be used for signing.
 [^p-256]: P-256 and P-384 are two of the most widely supported key algorithms as of 2025.
