@@ -4,16 +4,17 @@ The given domain list overlaps to 4 % with the database (5/3462 domains)
 
 List endpoint? --> get all lists
 then download lists, combine into one list and compare with given list
-OR execute script on pihole device and get lists directly via /etc/pihole/listsCache (is there another place where lists are saved?)
+OR execute script on pihole device and get lists directly via gravity.db
 
-is there an easy way to get total number of domains in database? (metrics or ftl endpoint?)
-compare length of all lists with total number in database?
+is there an easy way to get total number of domains in database?
 
 differentiate allow/block list?
 filter for enabled/disabled?
 handle exact/regex?
 
-User input - Address of the list you want to add: X - Type of list: Allow/Block
+User input - Address of the list you want to add: Path - Type of list: Allow/Block
+
+pi.ftl.get_ftl_info()["database"]["gravity"] --> Number of collected exact domains on lists
 
 2. Script that outputs the number of duplicates in the database
 
