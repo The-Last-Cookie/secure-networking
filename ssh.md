@@ -2,8 +2,6 @@
 
 SSH is a protocol for establishing a remote connection to a server. Usually, it is used for remote management (server configuration) or file transfer.
 
-Upon first connection, it will ask if the connection should actually be established. Acknowledging this will add an entry in the file `~/.ssh/known_hosts` to make sure the user only connects to trustable servers.
-
 ## Password-based authentication
 
 By default, any normal user added via "useradd" is able to login via their respective password on the server.
@@ -48,7 +46,20 @@ To use the private key for authentication, type in the command `ssh -i <private 
 
 ### known_hosts
 
-File containing host keys of previously connected SSH servers. Used to prevent MITM attacks.
+Upon installing a SSH server, host keys are automatically created and stored under `/etc/ssh`. These public/private key pairs should be unique to each host.[^key-name]
+
+When first connecting to a SSH server, the user is asked if the connection should actually be established. Acknowledging this will add the public host key of the server in the file `~/.ssh/known_hosts` on the client (in the user directory). This step is used to verify the server's identity against the client, to make sure the user only connects to trustable servers.
+
+The host keys can also be added manually by copying the content of the public host key files from the server to the `known_hosts` file on the client.
+
+Another way to verify the server is to create a fingerprint of the host key on the server with `ssh-keygen -lf <public host key>` and then compare it with the presented identity in the login dialogue.
+
+It is good practice to verify the presented identity when connecting to a server for the first time.
+
+<!--
+rotate host keys?
+ssh-keygen -A
+https://unix.stackexchange.com/questions/334597/how-to-roll-over-ssh-host-keys -->
 
 ### authorized_keys
 
@@ -104,3 +115,7 @@ AllowGroups ssh-user
 ```
 
 This is not done out of security reasons, but can be useful when having several people that need to access the same server via SSH.
+
+## Annotations
+
+[^key-name]: Due to using the same underlying concept to host keys, manually generated key pairs used for user authentication are sometimes called user SSH keys.
