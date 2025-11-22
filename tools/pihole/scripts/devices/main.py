@@ -3,7 +3,7 @@ import os
 import config
 import pyhole
 
-PI_MAC=config.get("pi_mac")
+PI_MAC = config.get("pi_mac")
 
 cert = config.get('cert_bundle')
 password = config.get('password')

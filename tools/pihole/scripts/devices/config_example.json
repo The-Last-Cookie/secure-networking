@@ -1,0 +1,5 @@
+{
+	"cert_bundle": "/path/to/certificate.pem",
+	"password": "your_password",
+	"pi_mac": "mac_of_pi"
+}
