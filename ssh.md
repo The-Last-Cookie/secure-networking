@@ -23,7 +23,7 @@ Using key-based authentication instead of just passwords does not increase secur
 2. **Type in the filename:** It is recommended to use the service's name the key will be used for. Create a single key pair for every server/service.
 3. **Choose a passphrase:** Now choose a password for your key, so it is stored in an encrypted format. For leaving the passphrase empty, immediately press `Enter`. They key is then stored unencrypted on the disk.
 
-The key pair can now be found under the HOME directory in `~/.ssh/KEYNAME`.
+The key pair can now be found in the current working directory. It is recommended to store every user key pair in the SSH folder in the user's home directory (`~/.ssh/`).
 
 ### Configuring the SSH service on the server
 
@@ -58,6 +58,7 @@ It is good practice to verify the presented identity when connecting to a server
 
 <!--
 rotate host keys?
+remove host keys first, then
 ssh-keygen -A
 https://unix.stackexchange.com/questions/334597/how-to-roll-over-ssh-host-keys -->
 
