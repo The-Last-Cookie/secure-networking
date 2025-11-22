@@ -19,7 +19,7 @@ Using key-based authentication instead of just passwords does not increase secur
 
 ### Generating a key pair
 
-1. **Basic command specifying the algorithm:** `ssh-keygen -t ed25519 -C "your@email.com"`
+1. **Basic command specifying the algorithm:** `ssh-keygen -t ed25519`
 2. **Type in the filename:** It is recommended to use the service's name the key will be used for. Create a single key pair for every server/service.
 3. **Choose a passphrase:** Now choose a password for your key, so it is stored in an encrypted format. For leaving the passphrase empty, immediately press `Enter`. They key is then stored unencrypted on the disk.
 
