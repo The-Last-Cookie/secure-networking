@@ -13,7 +13,7 @@ pi.authenticate(password)
 
 
 with open("devices.txt", mode="r") as f:
-	current_devices = f.readlines()
+	current_devices = f.read().splitlines()
 
 # Make sure the file gets properly replaced by the new one
 os.remove("devices.txt")
@@ -22,12 +22,13 @@ devices = pi.network.get_devices()
 
 for device in devices:
 	mac_addr = device['hwaddr']
-	if mac_addr not in current_devices:
+	if not mac_addr in current_devices:
 		if mac_addr == "00:00:00:00:00:00" or mac_addr == PI_MAC:
 			continue
 
 		print(f"Alert: {mac_addr} not found in device list.")
-		current_devices.append(mac_addr + "\n")
+		current_devices.append(mac_addr)
 
 with open("devices.txt", mode="w") as f:
-	f.writelines(current_devices)
+	for device in current_devices:
+		f.write(device + "\n")
