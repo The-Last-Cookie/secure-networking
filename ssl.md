@@ -24,11 +24,17 @@ If not already present, install OpenSSL:
 sudo apt install openssl
 ```
 
-Create a folder to hold your certificate, config, and key files:
+It is recommended to keep everything in one place, so create a folder to hold your certificate, config, and key files:
 
 ```sh
 mkdir -p ~/crt && cd ~/crt
 ```
+
+It does not matter in which location the certification files are stored, however, it is important that the webserver has access to the files, i.e. that read permissions are correctly set and that the webserver is configured in the right way. In the case of Pi-hole, check the `webserver.tls.cert` setting which links to the server certificate.[^tls-validity]
+
+### Create a Certificate Configuration File (`cert.cnf`)
+
+See the [certificate template](#certificate-template).
 
 ### Create a Certificate Authority (CA) Key and Certificate
 
@@ -47,11 +53,7 @@ openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -days 
 
 The **CA key** (homelabCA.key) and **CA certificate** (homelabCA.crt) are now ready to be used to sign server certificates.
 
-### Create a Certificate Configuration File (`cert.cnf`)
-
-See the [certificate template](#certificate-template).
-
-### Generate a Key and CSR
+### Generate a Key and CSR for the web server certificate
 
 Use Elliptic Curve Digital Signature Algorithm (ECDSA) to generate both the private key (`tls.key`) and Certificate Signing Request (CSR) (`tls.csr`).
 
@@ -242,9 +244,6 @@ General workflow:
 
 - [Lockdown the unencrypted key file via permissions (filesystem ACL)](https://stackoverflow.com/a/23718323)
 - [How can I generate a self-signed SSL certificate using OpenSSL?](https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl) (several answers with useful input, especially about the parameters to set in the config file)
-- <https://arminreiter.com/2022/01/create-your-own-certificate-authority-ca-using-openssl/>
-- <https://youtu.be/bv47DR_A0hw>
-- <https://www.golinuxcloud.com/create-certificate-authority-root-ca-linux/>
 
 Creation of the config file:
 
@@ -256,7 +255,8 @@ Creation of the config file:
 
 ## References
 
-- This project was inspired by ["Pi-hole v6: Creating Your Own Self-Signed SSL Certificates" by kaczmar2 (2025-02-22)](https://gist.github.com/kaczmar2/e1b5eb635c1a1e792faf36508c5698ee)
+- This project was mainly inspired by ["Pi-hole v6: Creating Your Own Self-Signed SSL Certificates" by kaczmar2 (2025-02-22)](https://gist.github.com/kaczmar2/e1b5eb635c1a1e792faf36508c5698ee)
+- [Create your own Certificate Authority (CA) using OpenSSL](https://arminreiter.com/2022/01/create-your-own-certificate-authority-ca-using-openssl/)
 
 ## Annotations
 
@@ -265,4 +265,5 @@ Creation of the config file:
 [^key-exchange]: Examples of this include the Diffie-Hellman-Exchange or the encryption of the symmetric key with a public/private key pair.
 [^authentication]: Examples are RSA, Digital Signature Algorithm (DSA) and ECDSA (DSA with elliptic curves). To summarise, RSA can be used both for signing and key exchange, while Diffie-Hellman can only be used to generate a symmetric key for en-/decryption and DSA can only be used for signing.
 [^p-256]: P-256 and P-384 are two of the most widely supported key algorithms as of 2025.
+[^tls-validity]: At this point, you may also want to check out the `webserver.tls.validity` setting, automatically renewing outdated certificates and potentially overwriting ones that are manually generated.
 [^certmgr]: The MMC snap-in for managing certificate displays the global system store. The other options show context specific store, e.g. certificates installed in the user space, similar to [what the certmgr.msc utility does](https://serverfault.com/a/407492).
