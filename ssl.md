@@ -117,6 +117,8 @@ sudo service pihole-FTL restart
 
 Install the root certificate on the local computer, so that server certificates signed by this CA will be marked as verified.
 
+Be cautious when adding or removing certificates because it can affect the security and functionality of your system.
+
 Similar like in the following tools, the certificate file content can also be displayed with this command:
 
 ```sh
@@ -143,7 +145,24 @@ TODO
 
 #### Windows
 
-TODO: mmc.exe
+The Trusted Root Certification Authorities certificate store contains the root certificates of all CAs that Windows trusts.
+
+To access the Trusted Root Certification Authorities certificate store on a Windows computer, you can use the Microsoft Management Console (MMC) with the Certificates snap-in.
+
+1. Open the Windows Run dialog: Press `Windows key` + `R` to open the Run dialog.
+2. Open the Microsoft Management Console (MMC): Type `mmc` into the Run dialog and press `Enter`. This command opens the Microsoft Management Console. If **User Account Control** (UAC) prompts you, select `Yes` to allow the MMC to make changes to your device.
+3. Add the certificates snap-in:
+  a. In the MMC menu bar, select `Datei` and then select `Snap-in hinzufügen/entfernen`.
+  b. In the **Add or Remove Snap-ins** window, scroll down, and select `Zertifikate`, then select `Hinzufügen >`.
+  c. A dialog asks which certificates you want to manage. Select `Computerkonto` account, then select `Weiter`.
+  d. Select `Lokalen Computer: (Computer, auf dem diese Konsole ausgeführt wird)`, then select `Fertig stellen`.
+    - You can also choose My user account or Service account depending on your needs, but for accessing the Trusted Root Certification Authorities, choose Computer account.[^certmgr]
+  e. Select `OK` to close **Add or Remove Snap-ins**.
+4. Access the Trusted Root Certification Authorities:
+  a. In the MMC, select `Zertifikate (Lokaler Computer)`
+  b. To add a new certificate, right-click on `Vertrauenswürdige Stammzertifizierungsstellen`. In the context menu, choose `Alle Aufgaben`, then click on `Importieren`. Follow the dialogue menu to finish the process.
+
+<!-- https://learn.microsoft.com/en-us/windows-hardware/drivers/install/trusted-root-certification-authorities-certificate-store -->
 
 ### Issuing additional server certificates with your CA (optional)
 
@@ -246,3 +265,4 @@ Creation of the config file:
 [^key-exchange]: Examples of this include the Diffie-Hellman-Exchange or the encryption of the symmetric key with a public/private key pair.
 [^authentication]: Examples are RSA, Digital Signature Algorithm (DSA) and ECDSA (DSA with elliptic curves). To summarise, RSA can be used both for signing and key exchange, while Diffie-Hellman can only be used to generate a symmetric key for en-/decryption and DSA can only be used for signing.
 [^p-256]: P-256 and P-384 are two of the most widely supported key algorithms as of 2025.
+[^certmgr]: The MMC snap-in for managing certificate displays the global system store. The other options show context specific store, e.g. certificates installed in the user space, similar to [what the certmgr.msc utility does](https://serverfault.com/a/407492).
