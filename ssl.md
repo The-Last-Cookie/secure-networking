@@ -99,7 +99,7 @@ Pi-hole has by default two certificate files, the root CA certificate is in `/et
 
 ### Set file permissions
 
-Make sure that only the required permissions are applied:
+Make sure that only the required permissions are applied (the certificate needs to be readable by user `pihole`):
 
 ```sh
 sudo chown pihole:pihole /etc/pihole/tls.pem
@@ -117,11 +117,25 @@ sudo service pihole-FTL restart
 
 Install the root certificate on the local computer, so that server certificates signed by this CA will be marked as verified.
 
-<!-- installing cert in browser or os root store -> mmc.exe -->
+Similar like in the following tools, the certificate file content can also be displayed with this command:
+
+```sh
+openssl x509 -in certificate.pem -text -noout
+```
 
 #### Web browser (Firefox)
 
-TODO
+Go to `Einstellungen` > `Datenschutz & Sicherheit`. The short link is <about:preferences#privacy>. In this section, either search for or go to the chapter `Zertifikate` and then click on `Zertifikate anzeigen`.
+
+In the menu that appears, click on `Zertifizierungsstellen`. Then click `Importieren` and select the CA certificate. In the next dialogue, choose `Dieser CA vertrauen, um Websites zu identifizieren`.
+
+![dialogue to trust the certificate](img/ca-trust.png "Trusting the CA certificate")
+
+Now click on `OK` to import the certificate. As the last step verify that the certificate was imported correctly by viewing it in the listing.
+
+![certificate listing](img/certificate-verification.png "Verify that the certificate was imported correctly")
+
+<!-- web server certificates will be listed under `Authentifizierungs-Entscheidungen` instead? -->
 
 #### Linux
 
@@ -212,7 +226,6 @@ General workflow:
 - <https://arminreiter.com/2022/01/create-your-own-certificate-authority-ca-using-openssl/>
 - <https://youtu.be/bv47DR_A0hw>
 - <https://www.golinuxcloud.com/create-certificate-authority-root-ca-linux/>
-- <https://docs.pi-hole.net/api/tls/>
 
 Creation of the config file:
 
@@ -221,10 +234,6 @@ Creation of the config file:
 - [KeyUsage extension](https://superuser.com/questions/738612/openssl-ca-keyusage-extension)
 - [Minimal cert config file](https://technotes.shemyak.com/posts/min-openssl-cnf/)
 - [Example for a config file](https://github.com/JW0914/Wikis/blob/master/Scripts%2BConfigs/OpenSSL/openssl.cnf)
-
-<!--
-openssl x509 -in mycert.pem -text -noout
--->
 
 ## References
 
