@@ -63,7 +63,7 @@ openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -noenc -keyout
 
 - `-newkey ec`: Creates a new EC key.
 - `-pkeyopt ec_paramgen_curve:prime256v1`: Uses P-256 curve.
-- `-noenc` - No password on the private key.
+- `-noenc`: No password on the private key.<!-- Use -cipher aes-256-cbc instead to encrypt the key with a password. -->
 - `-keyout tls.key`: Saves the private key.
 - `-out tls.csr`: Saves the certificate signing request (CSR).
 - `-config cert.cnf`: Uses the config file for CSR details.
@@ -117,7 +117,7 @@ sudo service pihole-FTL restart
 
 ### Add the CA to the Trusted Root Certificate Store
 
-Install the root certificate on the local computer, so that server certificates signed by this CA will be marked as verified.
+Install the root CA certificate on the local computer, so that server certificates signed by this CA will be marked as verified.
 
 Be cautious when adding or removing certificates because it can affect the security and functionality of your system.
 
@@ -238,20 +238,9 @@ IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
 
 ## Links
 
-*TODO: Integrate these in the document.*
-
 General workflow:
 
 - [Lockdown the unencrypted key file via permissions (filesystem ACL)](https://stackoverflow.com/a/23718323)
-- [How can I generate a self-signed SSL certificate using OpenSSL?](https://stackoverflow.com/questions/10175812/how-can-i-generate-a-self-signed-ssl-certificate-using-openssl) (several answers with useful input, especially about the parameters to set in the config file)
-
-Creation of the config file:
-
-- [Official example for a config file](https://github.com/openssl/openssl/blob/master/apps/openssl.cnf)
-- [openssl docs](https://docs.openssl.org/master/man5/x509v3_config/#standard-extensions)
-- [KeyUsage extension](https://superuser.com/questions/738612/openssl-ca-keyusage-extension)
-- [Minimal cert config file](https://technotes.shemyak.com/posts/min-openssl-cnf/)
-- [Example for a config file](https://github.com/JW0914/Wikis/blob/master/Scripts%2BConfigs/OpenSSL/openssl.cnf)
 
 ## References
 
