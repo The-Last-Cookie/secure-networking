@@ -11,7 +11,7 @@ For now, Tenable Nessus Essentials (from now on *Tenable*) will be used because 
 
 ## Installation
 
-*Notice: To use Nessus efficiently, it is recommend to use a Raspberry Pi 4 Model B with at least 8 GB RAM.*\
+*Notice: To use Nessus efficiently, it is recommended to use a Raspberry Pi 4 Model B with at least 8 GB RAM.*\
 *Caution: Nessus only runs on a Raspberry Pi 32 bit OS!*. See [this Reddit thread](https://www.reddit.com/r/nessus/comments/1d62q5n/nessus_package_installation_error_raspberry_pi_5/).
 
 1. Download the package file for the current version (`.deb`).
