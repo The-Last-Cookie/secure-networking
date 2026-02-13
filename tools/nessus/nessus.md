@@ -12,7 +12,7 @@ For now, Tenable Nessus Essentials (from now on *Tenable*) will be used because 
 ## Installation
 
 *Notice: To use Nessus efficiently, it is recommend to use a Raspberry Pi 4 Model B with at least 8 GB RAM.*\
-*Caution: Nessus only runs on a Raspberry Pi 32 bit OS!*: <https://www.reddit.com/r/nessus/comments/1d62q5n/nessus_package_installation_error_raspberry_pi_5/>
+*Caution: Nessus only runs on a Raspberry Pi 32 bit OS!*. See [this Reddit thread](https://www.reddit.com/r/nessus/comments/1d62q5n/nessus_package_installation_error_raspberry_pi_5/).
 
 1. Download the package file for the current version (`.deb`).
 2. Install the package via `dpkg -i Nessus-10.0.0-raspberrypios_armhf.deb`.
@@ -173,7 +173,7 @@ chmod 700 /home/<username>/.ssh
 chmod 600 /home/<username>/.ssh/authorized_keys
 ```
 
-The user also needs to be configured to allow Nessus to escalate privileges. The more privileges the user has, the deeper Nessus can scan the system. Create a new dedicated file in the sudoers space with `sudo visudo -f /etc/sudoers.d/nessus`. In the editor that appears (usually nano), type in `<username> ALL=(ALL) NOPASSWD: ALL` to disable the password requirement for the Nessus user.[^sudoers] As the last step, set the permissions to the lowest level required with `sudo chmod 0440 /etc/sudoers.d/nessus`, so the file is only readable by root. Giving the user all permissions is fine because the user gets deactivated after the scan anyway.
+The user also needs to be configured to allow Nessus to escalate privileges. The more privileges the user has, the deeper Nessus can scan the system. Create a new dedicated file in the sudoers space with `sudo visudo -f /etc/sudoers.d/nessus`. In the editor that appears (usually nano), type in `<username> ALL=(ALL) NOPASSWD: ALL` to disable the password requirement for the Nessus user.[^sudoers] As the last step, set the permissions to the lowest level required with `sudo chmod 0440 /etc/sudoers.d/nessus`, so the file is only readable by root. Giving the user all permissions is fine because the user gets deactivated after the scan anyway.[^usermod]
 
 Tenable Nessus encrypts all passwords stored in policies. However, Tenable recommends using SSH keys for authentication rather than SSH passwords. This helps ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a login into a system that may not be under your control.
 
@@ -203,7 +203,7 @@ sudo systemctl start ssh
 | Private key | The private key you have saved on the Nessus scanner as described above. |
 | Private key passphrase | In case you have defined a passphrase for the private key. |
 | Elevate privileges with | sudo |
-| known_hosts file | Add your known_hosts file here. |
+| known_hosts file | Add your known_hosts file here.[^import] |
 
 If an SSH **known_hosts file** is available and provided as part of the Global Credential Settings of the scan policy in the **known_hosts file** field, Tenable Nessus attempts to log into hosts in this file. This can ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control.
 
@@ -250,5 +250,7 @@ sudo systemctl start nessusd.service
 [^ps1]: The shell variable PS1 (not to be confused with environment variable) defines the prompt text in the console displayed to the left, before typing in a command. It's default value is described in `.bashrc` with `PS1='\u@\h:~\$ '`. For more information, see [Prompt](https://wiki.ubuntuusers.de/Bash/Prompt/).
 [^sudo-user]: See [How To Create A New Sudo Enabled User on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu) and [How To Edit the Sudoers File](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file)
 [^sudoers]: [How do I run specific sudo commands without a password?](https://askubuntu.com/questions/159007/how-do-i-run-specific-sudo-commands-without-a-password)
+[^usermod]: Activating or deactivating a user requires sudo permissions.
+[^import]: After importing the file, it is saved under /opt/nessus/var/nessus/user/\<user\>/files on the server running Nessus.
 [^disable-account-linux]: [How to enable or disable a user?](https://askubuntu.com/a/607108)
 [^SSH-server]: See more details [here](https://www.veuhoff.net/ubuntu-ssh-server-installation-und-konfiguration-aktivierung/).
