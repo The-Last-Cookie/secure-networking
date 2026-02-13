@@ -188,20 +188,14 @@ After that, you can install the certificate file where you need it.
 
 ## Certificate template
 
-Save as `cert.cnf`.
+`cert_ca.cnf`:
+
+<!-- it is not possible having different distinguished names in one config file, so we split it in two -->
 
 ```sh
-# Country Name (C)
-# Organization Name (O)
-# Common Name (CN) - Set this to your server’s hostname or IP address.
-
-# SAN (Subject Alternative Name), [alt-names] is required
-# You can add as many hostname and IP entries as you wish
-
 [req]
 default_md = sha256
 distinguished_name = req_distinguished_name
-req_extensions = v3_req
 x509_extensions = v3_ca
 prompt = no
 
@@ -214,8 +208,30 @@ CN = pi.hole
 [v3_ca]
 subjectAltName = @alt_names
 subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
 basicConstraints = critical, CA:TRUE
 keyUsage = keyCertSign
+
+[alt_names]
+DNS.1 = pi.hole                 # Default pihole hostname
+DNS.2 = pihole-test             # Replace with your server's hostname
+DNS.3 = pihole-test.home.arpa   # Replace with your server's FQDN
+IP.1 = 10.10.10.115             # Replace with your Pi-hole IP
+```
+
+`cert_server.cnf`:
+
+```sh
+[req]
+default_md = sha256
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = US
+O = My Homelab
+CN = pi.hole
 
 # Used for certificate signing requests
 [v3_req]
