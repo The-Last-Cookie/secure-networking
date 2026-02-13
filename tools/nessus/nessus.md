@@ -11,7 +11,8 @@ For now, Tenable Nessus Essentials (from now on *Tenable*) will be used because 
 
 ## Installation
 
-*Notice: To use Nessus efficiently, it is recommend to use a Raspberry Pi 4 Model B with at least 8 GB RAM.*
+*Notice: To use Nessus efficiently, it is recommend to use a Raspberry Pi 4 Model B with at least 8 GB RAM.*\
+*Caution: Nessus only runs on a Raspberry Pi 32 bit OS!*. See [this Reddit thread](https://www.reddit.com/r/nessus/comments/1d62q5n/nessus_package_installation_error_raspberry_pi_5/).
 
 1. Download the package file for the current version (`.deb`).
 2. Install the package via `dpkg -i Nessus-10.0.0-raspberrypios_armhf.deb`.[^64-bit]
@@ -49,9 +50,18 @@ To store passwords for these dedicated accounts, Bitwarden might be useful to ha
 
 There are a few best practices outlined [here](https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-windows-hosts) for an AD environment, however, this article only concerns computers that are not part of a domain.
 
+For authentication methods on Windows suitable for Nessus, see [Scans > Scan Templates > Credentials > Host Credentials > Windows](https://docs.tenable.com/nessus/Content/Windows.htm).
+
 #### Linux
 
-- <https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts>
+General tips for protecting credentials are outlined [here](https://www.tenable.com/blog/5-ways-to-protect-scanning-credentials-for-linux-macos-and-unix-hosts):
+
+1. **Securely configure SSH:** Tips for SSH can be read [here](./../../ssh.md).
+2. **Least privilege functionality:** Allow access to what is needed ([Configuring Least Privilege SSH scans with Nessus](https://www.tenable.com/blog/configuring-least-privilege-ssh-scans-with-nessus) may be of help).
+3. **Unique accounts for authentication and assessments:** Consider setting [this in Nessus](https://docs.tenable.com/nessus/Content/SSH.htm).
+4. **SSH key encryption:** If using a SSH key, a passphrase should be added so that the key file is encrypted.
+
+For authenticating on Linux, see [Scans > Scan Templates > Credentials > Host Credentials > SSH](https://docs.tenable.com/nessus/Content/SSH.htm).
 
 ### Common Scan Failure Indicators
 
@@ -137,9 +147,65 @@ Set-SmbServerConfiguration -AutoShareServer $False -AutoShareWorkstation $False 
 
 ### Scanning Linux
 
-**Linux** does support credentialed scans via SSH key authentication.
+**Linux** does support credentialed scans via SSH key authentication.[^linux-scan] The account used for scanning must have root privileges.
 
-- <https://docs.tenable.com/nessus/Content/CredentialedChecksOnLinux.htm>
+*Notice: If the shell variable PS1 is shorter than 4 letters, the scan time may drastically increase.*[^ps1]
+
+#### Generate SSH public and private key pair
+
+It does not matter where and how the key pair is created. However, it is important that the defined Tenable Nessus user owns the keys.
+
+Create a key pair with `ssh-keygen -t ed25519`. It is recommended to set **nessus** as the filename. Then, choose a passphrase (or choose an empty password by pressing `Return` twice). If you specify a passphrase, you must specify it in **Policies** > **Credentials** > **SSH settings** for Tenable Nessus to use key-based authentication.
+
+The private key will **stay on the server running Nessus**. The public key will be distributed to all clients that are scanned.
+
+#### Host settings
+
+To add a user for Nessus to login with, use the `adduser <username>` command. A prompt asking for the password and some optional information will appear. It does not matter what is entered in the prompt.
+
+Then, add the user to the `sudo` group with `usermod -aG sudo <username>`. Commands issued with sudo by this user will now run with root privileges.[^sudo-user]
+
+You must create the directory under the new account’s home directory to hold the public key. By default, the key file is copied under `/home/<username>/.ssh` and added to the `authorized_keys` file.
+
+```sh
+chown -R <username>:<username> /home/<username>/.ssh/
+chmod 700 /home/<username>/.ssh
+chmod 600 /home/<username>/.ssh/authorized_keys
+```
+
+The user also needs to be configured to allow Nessus to escalate privileges. The more privileges the user has, the deeper Nessus can scan the system. Create a new dedicated file in the sudoers space with `sudo visudo -f /etc/sudoers.d/nessus`. In the editor that appears (usually nano), type in `<username> ALL=(ALL) NOPASSWD: ALL` to disable the password requirement for the Nessus user.[^sudoers] As the last step, set the permissions to the lowest level required with `sudo chmod 0440 /etc/sudoers.d/nessus`, so the file is only readable by root. Giving the user all permissions is fine because the user gets deactivated after the scan anyway.[^usermod]
+
+Tenable Nessus encrypts all passwords stored in policies. However, Tenable recommends using SSH keys for authentication rather than SSH passwords. This helps ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a login into a system that may not be under your control.
+
+When no scan is running, the user account can be disabled to forbid any login (even SSH) by `sudo usermod --expiredate 1 <username>`. Reenable the account with `sudo usermod --expiredate "" <username>`.[^disable-account-linux]
+
+To verify that the login over SSH works, use the `id` command:
+
+```sh
+ssh -i <ssh_private_key> <username>@<scanned_host> id
+```
+
+#### Activate SSH server on scanned host
+
+The host that should be scanned by Nessus requires a SSH server, so Nessus can login to the system.[^SSH-server]
+
+```sh
+sudo apt install openssh-server
+sudo systemctl start ssh
+```
+
+#### Scan configuration in Nessus
+
+| Option | Value |
+| :-: | :-: |
+| Authentication method | Public key |
+| Username | The Nessus \<username\> account used for scanning. |
+| Private key | The private key you have saved on the Nessus scanner as described above. |
+| Private key passphrase | In case you have defined a passphrase for the private key. |
+| Elevate privileges with | sudo |
+| known_hosts file | Add your known_hosts file here.[^import] |
+
+If an SSH **known_hosts file** is available and provided as part of the Global Credential Settings of the scan policy in the **known_hosts file** field, Tenable Nessus attempts to log into hosts in this file. This can ensure that someone does not use the same username and password you are using to audit your known SSH servers to attempt a log into a system that may not be under your control.
 
 ## Managing Nessus
 
@@ -181,3 +247,11 @@ sudo systemctl start nessusd.service
 [^uac]: In German, the dialogue is called "Einstellungen der Benutzerkontensteuerung ändern" and needs to be set from `Standard` to `Nie benachrichtigen`.
 [^remote-registry]: In German, `Remoteregistrierung` must be set from `Deaktiviert` to `Automatisch`.
 [^printer-sharing]: In German, `File and printer sharing` is called `Datei- und Druckerfreigabe`.
+[^linux-scan]: See [Credentialed Checks on Linux](https://docs.tenable.com/nessus/Content/CredentialedChecksOnLinux.htm) and [SSH](https://docs.tenable.com/nessus/Content/SSH.htm).
+[^ps1]: The shell variable PS1 (not to be confused with environment variable) defines the prompt text in the console displayed to the left, before typing in a command. It's default value is described in `.bashrc` with `PS1='\u@\h:~\$ '`. For more information, see [Prompt](https://wiki.ubuntuusers.de/Bash/Prompt/).
+[^sudo-user]: See [How To Create A New Sudo Enabled User on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu) and [How To Edit the Sudoers File](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file)
+[^sudoers]: [How do I run specific sudo commands without a password?](https://askubuntu.com/questions/159007/how-do-i-run-specific-sudo-commands-without-a-password)
+[^usermod]: Activating or deactivating a user requires sudo permissions.
+[^import]: After importing the file, it is saved under /opt/nessus/var/nessus/user/\<user\>/files on the server running Nessus.
+[^disable-account-linux]: [How to enable or disable a user?](https://askubuntu.com/a/607108)
+[^SSH-server]: See more details [here](https://www.veuhoff.net/ubuntu-ssh-server-installation-und-konfiguration-aktivierung/).
