@@ -19,7 +19,7 @@ Using key-based authentication instead of just passwords does not increase secur
 
 ### Generating a key pair
 
-1. **Basic command specifying the algorithm:** `ssh-keygen -t ed25519`
+1. **Basic command specifying the algorithm:** `ssh-keygen -t ed25519`[^algorithm]
 2. **Type in the filename:** It is recommended to use the service's name the key will be used for. Create a single key pair for every server/service.
 3. **Choose a passphrase:** Now choose a password for your key, so it is stored in an encrypted format. For leaving the passphrase empty, immediately press `Enter`. They key is then stored unencrypted on the disk.
 
@@ -36,7 +36,16 @@ It is important that the files used in the context of SSH have the right permiss
 ```sh
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
+chown -R <user>:<user> /home/<user>/.ssh
 ```
+
+The following is not really done for security reasons, but to deter bots, the SSH server could disallow root login and reject password authentication. Be careful when doing this step, as one may lock them out of the server! Go into `/etc/ssh/sshd_config` and set these options:
+
+> PermitRootLogin no
+>
+> PasswordAuthentication no
+
+To load the new settings, restart the SSH server with `sudo systemctl restart sshd` (currently active SSH sessions should stay open).
 
 ### Connecting to the server
 
@@ -119,4 +128,5 @@ This is not done out of security reasons, but can be useful when having several 
 
 ## Annotations
 
+[^algorithm]: An alternative standard is `-t ecdsa -b 521`
 [^key-name]: Due to using the same underlying concept to host keys, manually generated key pairs used for user authentication are sometimes called user SSH keys.
