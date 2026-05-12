@@ -28,8 +28,8 @@ for message in messages:
         if msg.startswith("List with ID ") and msg.endswith(" was inaccessible during last gravity run"):
                 tokens = msg.split(" ")
                 address = tokens[4]
-                address.removeprefix("(")
-                address.removesuffix(")")
+                address = address.removeprefix("(")
+                address = address.removesuffix(")")
 
                 unavailable_today.append(address)
                 if address not in store:
