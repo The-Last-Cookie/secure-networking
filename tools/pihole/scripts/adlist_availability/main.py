@@ -35,13 +35,13 @@ for message in messages:
                 if address not in store:
                         store.append(address)
                         with open(LOG, mode='a') as file:
-                                file.write(f"{today}: '{address}' not available.")
+                                file.write(f"{today}: '{address}' not available.\n")
 
 for store_address in store:
         if store_address not in unavailable_today:
                 store.remove(store_address)
                 with open(LOG, mode='a') as file:
-                        file.write(f"{today}: '{store_address}' seems to be available again.")
+                        file.write(f"{today}: '{store_address}' seems to be available again.\n")
 
 with open(ADDRESS_STORE, mode='w') as file:
         store_file["addresses"] = store
