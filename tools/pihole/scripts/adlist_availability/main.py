@@ -45,4 +45,4 @@ for store_address in store:
 
 with open(ADDRESS_STORE, mode='w') as file:
         store_file["addresses"] = store
-        file.write(json.dumps(store))
+        file.write(json.dumps(store_file))
